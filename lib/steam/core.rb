@@ -82,13 +82,19 @@ module Steam
 
       query = {
        partner: to_steamid32(partner_steamid),
-       token: token
+       token: token,
+       l: 'en'
       }
 
       referer = "#{Steam::COMMUNITY_URL}/tradeoffer/new/?#{URI.encode_www_form(query)}";
       puts "URL: #{referer} -> sending #{formFields.ai}"
-      puts @request.headers(referer: referer)
-              .post(Steam::COMMUNITY_URL + '/tradeoffer/new/send', form: formFields)
+      result = @request.headers(referer: referer)
+              .post(Steam::COMMUNITY_URL + '/tradeoffer/new/send?l=en', form: formFields)
+              .parse
+      if result.key? 'strError'
+        raise result['strError']
+      end
+      result
     end
 
     private
