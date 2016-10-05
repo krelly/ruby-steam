@@ -1,10 +1,11 @@
 require_relative 'two_factor.rb'
 require_relative 'login.rb'
+
 require 'http'
-# require 'rest-client'
+require 'cgi'
 require 'json'
 require 'awesome_print'
-# require 'steam_crypto'
+
 module Steam
   class Bot
     attr_reader :steamid
@@ -13,18 +14,10 @@ module Steam
     # @param shared_secret [String]
     # @param authCode [String] your Steam Guard email code, only required if logging in with a new email auth code
     # @param api_key
-    # @param captcha [String] only required if you have been prompted with a CAPTCHA
-    def initialize(account_name:, password:, shared_secret:, api_key:, authCode: nil, captcha: nil)
+    def initialize(account_name:, password:, shared_secret:, api_key:, authCode: nil)
       @account_name = account_name
       @password = password
       @shared_secret = shared_secret
-      @steamid = 76561198125634572
-      @cookies = {
-        sessionid:'615807991',
-        steamLogin:'***REMOVED***',
-        steamLoginSecure:'***REMOVED***'
-      }
-
       # cookies = {
       #   sessionid: "698440498009b3a322bf08c2",
       #   steamCountry: "UA%7C1a9c38cb3f3a3935dc17708f6994197e",
@@ -36,11 +29,13 @@ module Steam
       #   timezoneOffset: "10800,0",
       #   webTradeEligibility: "%7B%22allowed%22%3A1%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A2%2C%22max_sales_per_year%22%3A200%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D",
       # }
-      @request = HTTP.cookies(@cookies)
     end
 
     def login
-      puts Login.new(@account_name, @password, @shared_secret).login()
+      cookies, steamid = Login.new(@account_name, @password, @shared_secret).login
+      @steamid = steamid
+      set_cookies(cookies)
+      cookies
     end
 
     def notifications_count
@@ -62,8 +57,8 @@ module Steam
       assetid_to_s = Proc.new do |item|
         item[:assetid] = item[:assetid].to_s
       end
-      items_to_give.map(assetid_to_s)
-      items_to_receive.map(assetid_to_s)
+      items_to_give.map &assetid_to_s
+      items_to_receive.map &assetid_to_s
 
       tradeoffer = {
         newversion: true,
@@ -78,7 +73,7 @@ module Steam
 
       formFields = {
         serverid: 1,
-        sessionid: @cookies[:sessionid],
+        sessionid: @cookies['sessionid'][0],
         partner: partner_steamid.to_s,
         tradeoffermessage: message,
         trade_offer_create_params: trade_offer_create_params.to_json,
@@ -90,12 +85,21 @@ module Steam
        token: token
       }
 
-      referer = "#{API_BASE_URL}/tradeoffer/new/?#{URI.encode_www_form(query)}";
+      referer = "#{Steam::COMMUNITY_URL}/tradeoffer/new/?#{URI.encode_www_form(query)}";
       puts "URL: #{referer} -> sending #{formFields.ai}"
       puts @request.headers(referer: referer)
-              .post(API_BASE_URL + '/tradeoffer/new/send', form: formFields)
+              .post(Steam::COMMUNITY_URL + '/tradeoffer/new/send', form: formFields)
     end
 
+    private
+      def set_cookies(cookies)
+        @request = HTTP.cookies(cookies)
+        cookie_to_h(cookies)
+      end
+
+      def cookie_to_h(cookies)
+        @cookies = CGI::Cookie::parse HTTP::Cookie.cookie_value(cookies)
+      end
   end
 
 end

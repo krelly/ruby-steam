@@ -22,18 +22,6 @@ module Steam
           char
         end.join
       end
-    private
-      def generate_confirmation_key(identity_secret, time, tag)
-        signature = [time].pack('Q>') + tag[0..31]
-        digest = OpenSSL::HMAC.digest('sha1', Base64.decode64(identity_secret), signature)
-        Base64.encode64(digest).chomp
-      end
-
-      def self.mobile_device_id(steam_id)
-        digest = Digest::SHA1.hexdigest steam_id
-        "android:#{digest[0..7]}-#{digest[8..11]}-#{digest[12..15]}-#{digest[16..19]}-#{digest[20..31]}"
-      end
-
     end
   end
 end

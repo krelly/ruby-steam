@@ -1,96 +1,111 @@
 require 'base64'
+require 'json'
 Dir.glob(__dir__ + '/../core_extensions/**/*.rb', &method(:require))
 
 class Login
-
   def initialize(account_name, password, shared_secret)
     @account_name = account_name
     @password = password.encode(Encoding::ASCII)
     @shared_secret = shared_secret
   end
 
+
   def login
     captcha = ''
     captcha_id = '-1'
-    loop do
-      res = send_login_request(captcha, captcha_id)
-      if res['success']
-        break
-      elsif res['captcha_needed']
-        captcha = prompt_captcha(res['captcha_gid'])
-        captcha_id = res['captcha_gid']
-        redo
-      elsif res['clear_password_field']
-        break
-      end
-
-      ##second login
-      auth_code = Steam::TwoFactor.generate_auth_code(@shared_secret)
-      res = send_login_request(captcha, captcha_id, auth_code)
-
-      if res['success']
-        return res
-      elsif res['captcha_needed']
-        captcha = prompt_captcha(res['captcha_gid'])
-        captcha_id = res['captcha_gid']
-      elsif res['clear_password_field']
-        break
-      end
+    begin
+      res, cookies = send_login_request(captcha, captcha_id)
+      cookies = perform_redirects(res, cookies)
+      return cookies, res['transfer_parameters']['steamid']
+    rescue Steam::Error::CaptchaNeeded
+      captcha = prompt_captcha(res['captcha_gid'])
+      captcha_id = res['captcha_gid']
+      retry
     end
-
   end
 
   private
-  def send_login_request(captcha, captcha_id, auth_code = '')
-    form = generate_login_form_data(captcha, captcha_id, auth_code)
-    headers = {
-        # ContentType: "application/x-www-form-urlencoded; charset=UTF-8",
-        :'User-Agent' => "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36",
-        # Host:"steamcommunity.com",
-        # Origin:"https://steamcommunity.com",
-        # Referer:"https://steamcommunity.com/login/home/?goto=0",
-        Timeout: 50000
-    }
-    HTTP.headers(headers).post("#{Steam::STORE_URL}/login/dologin", form: form).parse
+  # {"success"=>true, "requires_twofactor"=>true, "login_complete"=>true,
+  # "transfer_urls"=>["https://steamcommunity.com/login/transfer", "https://help.steampowered.com/login/transfer"],
+  # "transfer_parameters"=>{"steamid"=>"76561198125634572", "token"=>"***REMOVED***",
+  # "auth"=>"***REMOVED***", "remember_login"=>false, "webcookie"=>"***REMOVED***",
+  # "token_secure"=>"***REMOVED***"}}
+  def perform_redirects(res, cookies)
+    params = res['transfer_parameters']
+    results = res['transfer_urls'].map do |url|
+      r = HTTP.cookies(cookies).post(url, form: params).cookies
+    end
+    results.map(&:cookies).reduce(:+)
   end
 
-  def generate_login_form_data(captcha = '', captcha_id = '-1', auth_code)
+  def send_login_request(captcha, captcha_id)
+
+    headers = {
+      :'User-Agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
+    }
+
+    HTTP.persistent Steam::COMMUNITY_URL do |http|
+      # First send request without two-factor parameter
+      form = generate_login_form_data(captcha, captcha_id)
+      res = http.post('/login/dologin', form: form)
+      puts "first login: #{res.parse}"
+      # Now generate auth code and login second time
+      # Because it's how steam works xD
+      auth_code = Steam::TwoFactor.generate_auth_code(@shared_secret)
+      form = generate_login_form_data(captcha, captcha_id, auth_code)
+      res = http.cookies(res.cookies).post('/login/dologin', form: form)
+
+      puts "second login: #{res.parse}"
+      return res.parse, res.cookies
+    end
+
+    if res['clear_password_field']
+      raise Steam::Error::PasswordInvalid
+    elsif res['captcha_needed']
+      raise Steam::Error::CaptchaNeeded
+    elsif res['success']
+      raise !res['message']
+    end
+
+    res
+  end
+
+  def generate_login_form_data(captcha = '', captcha_id = '-1', auth_code = '')
     require 'date'
     keypair, timestamp = fetch_rsa_params
     {
-        password: encrypt_password(keypair),
-        username: @account_name,
-        twofactorcode: auth_code,
-        emailauth: '',
-        loginfriendlyname: 'defaultSteamBotMachine',
-        captchagid: captcha_id,
-        captcha_text: captcha,
-        emailsteamid: '',
-        rsatimestamp: timestamp,
-        remember_login: 'false',
-        donotcache: DateTime.now.strftime('%Q') # Unix time in ms
+      password: encrypt_password(keypair),
+      username: @account_name,
+      twofactorcode: auth_code,
+      emailauth: '',
+      loginfriendlyname: 'defaultSteamBotMachine',
+      captchagid: captcha_id,
+      captcha_text: captcha,
+      emailsteamid: '',
+      rsatimestamp: timestamp,
+      remember_login: 'false',
+      donotcache: DateTime.now.strftime('%Q') # Unix time in ms
     }
   end
 
   def prompt_captcha(id)
-    puts "Captcha is needed:"
+    puts 'Captcha is needed:'
     puts "#{Steam::COMMUNITY_URL}/public/captcha.php?gid=#{id}"
-    print "Type captcha:"
+    print 'Type captcha:'
     gets.chomp
   end
 
   def fetch_rsa_params
-    rsa_key_url = "#{Steam::COMMUNITY_URL}/login/getrsakey?username=#{@account_name}"
-    res = HTTP.get(rsa_key_url).parse
+    get_rsa_url = "#{Steam::COMMUNITY_URL}/login/getrsakey?username=#{@account_name}"
+    res = HTTP.get(get_rsa_url).parse
     pubkey_mod = res['publickey_mod'].hex
     pubkey_exp = res['publickey_exp'].hex
 
     rsa_keypair = OpenSSL::PKey::RSA.construct(pubkey_mod, pubkey_exp)
-    return rsa_keypair, res['timestamp']
+    [rsa_keypair, res['timestamp']]
   end
 
   def encrypt_password(rsa_instance)
-    require 'digest/sha1'
     encoded_password = rsa_instance.public_encrypt(@password)
     Base64.strict_encode64 encoded_password
   end
