@@ -5,6 +5,8 @@ require 'http'
 require 'cgi'
 require 'json'
 require 'awesome_print'
+require 'rest_client'
+
 
 module Steam
   class Bot
@@ -49,6 +51,10 @@ module Steam
     def to_steamid32(id)
       # lowest 32 bit of 64 bit steamid is actually a account id
       id & 0xFFFFFFFF
+    end
+
+    def get_my_inventory
+      self.class.get_inventory(@steamid)
     end
 
     # @param partner_steamid [String] 64bit steamid
@@ -97,15 +103,31 @@ module Steam
       result
     end
 
+    class << self
+      def get_inventory(steamid)
+        url = "https://steamcommunity.com/profiles/#{steamid}/inventory/json/730/2"
+        res = JSON.parse RestClient.get(url).body
+        map_by_assetid res
+      end
+
+      private
+      def map_by_assetid(res)
+        res['rgInventory'].each_with_object({}) do |(assetid, data), inventory|
+          description = res['rgDescriptions'][data['classid'] + '_' + data['instanceid']]
+          throw 'no item' if description.nil?
+          inventory[assetid] = description
+        end
+      end
+    end
+
     private
-      def set_cookies(cookies)
-        @request = HTTP.cookies(cookies)
-        cookie_to_h(cookies)
-      end
+    def set_cookies(cookies)
+      @request = HTTP.cookies(cookies)
+      cookie_to_h(cookies)
+    end
 
-      def cookie_to_h(cookies)
-        @cookies = CGI::Cookie::parse HTTP::Cookie.cookie_value(cookies)
-      end
+    def cookie_to_h(cookies)
+      @cookies = CGI::Cookie::parse HTTP::Cookie.cookie_value(cookies)
+    end
   end
-
 end
