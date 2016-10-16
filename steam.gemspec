@@ -17,5 +17,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'json'
   s.add_dependency 'awesome_print'
   s.add_dependency 'nokogiri'
-  s.add_dependency 'rest_client'
+  s.add_dependency 'rest-client'
 end

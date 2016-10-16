@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     steam (0.0.1)
+      http
 
 GEM
   remote: https://rubygems.org/
@@ -29,7 +30,6 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print
-  http
   json
   steam!
 

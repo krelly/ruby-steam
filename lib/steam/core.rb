@@ -5,7 +5,7 @@ require 'http'
 require 'cgi'
 require 'json'
 require 'awesome_print'
-require 'rest_client'
+require 'rest-client'
 
 
 module Steam
