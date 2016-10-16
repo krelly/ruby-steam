@@ -6,7 +6,7 @@ require 'steam/version'
 Gem::Specification.new do |s|
   s.name        = 'steam'
   s.version     = Steam::VERSION
-  s.summary     = "Hola!"
+  s.summary     = "Gem to interact with Steam, a gaming platform"
   s.description = "A simple hello world gem"
   s.authors     = ["krelly"]
   s.email       = 'itwilnotbeasy@gmail.com'
