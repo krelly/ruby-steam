@@ -2,3 +2,6 @@ node/
 examples/config/
 float.js
 .idea/
+/Gemfile.lock
+/.bundle/
+*.gem
