@@ -1,6 +1,11 @@
+lib = File.expand_path('../lib/', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'steam/version'
+
+
 Gem::Specification.new do |s|
   s.name        = 'steam'
-  s.version     = '0.0.1'
+  s.version     = Steam::VERSION
   s.summary     = "Hola!"
   s.description = "A simple hello world gem"
   s.authors     = ["krelly"]
