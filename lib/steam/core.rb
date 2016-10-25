@@ -60,11 +60,17 @@ module Steam
     # @param partner_steamid [String] 64bit steamid
     def send_trade_offer(partner_steamid:, token:, items_to_give:, items_to_receive:, message:'')
 
-      assetid_to_s = Proc.new do |item|
-        item[:assetid] = item[:assetid].to_s
+      format_items = -> (assetid) do
+        {
+          appid: 730,
+          contextid: 2,
+          amount: 1,
+          assetid: assetid.to_s
+        }
       end
-      items_to_give.map &assetid_to_s
-      items_to_receive.map &assetid_to_s
+
+      items_to_give.map! &format_items
+      items_to_receive.map! &format_items
 
       tradeoffer = {
         newversion: true,
