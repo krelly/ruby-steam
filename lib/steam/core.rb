@@ -16,10 +16,12 @@ module Steam
     # @param shared_secret [String]
     # @param authCode [String] your Steam Guard email code, only required if logging in with a new email auth code
     # @param api_key
-    def initialize(account_name:, password:, shared_secret:, api_key:, authCode: nil)
+    def initialize(account_name:, password:, shared_secret:, identity_secret:, api_key:, authCode: nil)
       @account_name = account_name
       @password = password
       @shared_secret = shared_secret
+      @identity_secret = identity_secret
+
       # cookies = {
       #   sessionid: "698440498009b3a322bf08c2",
       #   steamCountry: "UA%7C1a9c38cb3f3a3935dc17708f6994197e",
@@ -35,9 +37,22 @@ module Steam
 
     def login
       cookies, steamid = Login.new(@account_name, @password, @shared_secret).login
+      @confirmations = MobileConfirmations.new(@identity_secret, steamid, cookies)
       @steamid = steamid
+
       set_cookies(cookies)
-      cookies
+    end
+
+    def fetch_confirmations
+      @confirmations.fetch
+    end
+
+    def accept_confirmation(confirmation)
+      @confirmations.accept(confirmation)
+    end
+
+    def decline_confirmation(confirmation)
+      @confirmations.decline(confirmation)
     end
 
     def notifications_count
@@ -127,13 +142,11 @@ module Steam
     end
 
     private
+
     def set_cookies(cookies)
       @request = HTTP.cookies(cookies)
-      cookie_to_h(cookies)
-    end
-
-    def cookie_to_h(cookies)
       @cookies = CGI::Cookie::parse HTTP::Cookie.cookie_value(cookies)
+      cookies
     end
   end
 end
