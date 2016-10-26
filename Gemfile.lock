@@ -1,8 +1,12 @@
 PATH
   remote: .
   specs:
-    steam (0.0.1)
+    steam (0.1.0)
+      awesome_print
       http
+      json
+      nokogiri
+      rest-client
 
 GEM
   remote: https://rubygems.org/
@@ -21,6 +25,17 @@ GEM
     http-form_data (1.0.1)
     http_parser.rb (0.6.0)
     json (2.0.2)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
+    mini_portile2 (2.1.0)
+    netrc (0.11.0)
+    nokogiri (1.6.8.1)
+      mini_portile2 (~> 2.1.0)
+    rest-client (2.0.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
@@ -29,8 +44,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  awesome_print
-  json
   steam!
 
 BUNDLED WITH

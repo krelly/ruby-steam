@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative 'two_factor.rb'
 require_relative 'login.rb'
 
@@ -6,7 +7,6 @@ require 'cgi'
 require 'json'
 require 'awesome_print'
 require 'rest-client'
-
 
 module Steam
   class Bot
@@ -56,7 +56,7 @@ module Steam
     end
 
     def notifications_count
-      #https://steamcommunity.com/actions/GetNotificationCounts
+      # https://steamcommunity.com/actions/GetNotificationCounts
     end
 
     def steamid32
@@ -74,8 +74,7 @@ module Steam
 
     # @param partner_steamid [String] 64bit steamid
     def send_trade_offer(partner_steamid:, token:, items_to_give:, items_to_receive:, message:'')
-
-      format_items = -> (assetid) do
+      format_items = lambda do |assetid|
         {
           appid: 730,
           contextid: 2,
@@ -108,20 +107,26 @@ module Steam
       }
 
       query = {
-       partner: to_steamid32(partner_steamid),
-       token: token,
-       l: 'en'
+        partner: to_steamid32(partner_steamid),
+        token: token,
+        l: 'en'
       }
 
-      referer = "#{Steam::COMMUNITY_URL}/tradeoffer/new/?#{URI.encode_www_form(query)}";
-      puts "URL: #{referer} -> sending #{formFields.ai}"
+      referer = "#{Steam::TRADEOFFER_URL}/new/?#{URI.encode_www_form(query)}"
       result = @request.headers(referer: referer)
-              .post(Steam::COMMUNITY_URL + '/tradeoffer/new/send?l=en', form: formFields)
-              .parse
-      if result.key? 'strError'
-        raise result['strError']
+                       .post(Steam::TRADEOFFER_URL + '/new/send?l=en', form: formFields)
+                       .parse
+      raise result['strError'] if result.key? 'strError'
+      if result['needs_mobile_confirmation']
+        @confirmations.confirm_single(result['tradeofferid'])
       end
-      result
+      result['tradeofferid']
+    end
+
+    def cancel_offer(offer_id)
+      res  = @request.post("#{Steam::TRADEOFFER_URL}/#{offer_id}/cancel",
+                                form: { sessionid: @cookies['sessionid'][0] })
+      res.parse
     end
 
     class << self
@@ -132,6 +137,7 @@ module Steam
       end
 
       private
+
       def map_by_assetid(res)
         res['rgInventory'].each_with_object({}) do |(assetid, data), inventory|
           description = res['rgDescriptions'][data['classid'] + '_' + data['instanceid']]
@@ -145,7 +151,7 @@ module Steam
 
     def set_cookies(cookies)
       @request = HTTP.cookies(cookies)
-      @cookies = CGI::Cookie::parse HTTP::Cookie.cookie_value(cookies)
+      @cookies = CGI::Cookie.parse HTTP::Cookie.cookie_value(cookies)
       cookies
     end
   end

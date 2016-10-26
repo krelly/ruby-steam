@@ -20,15 +20,23 @@ module Steam
       doc.css('[data-confid]').map do |el|
         selector = '.mobileconf_list_entry_description>div'
         descriptions = el.css(selector).map(&:content).join('. ')
+        puts "id: #{el.attribute('data-confid').content}"
         Confirmation.new(self,
                          @request,
-                         id:           el.attribute('data-confid').content,
+                         id:           el.attribute('data-confid').content.to_i,
                          key:          el.attribute('data-key').content,
                          cancel:       el.attribute('data-cancel').content,
                          accept:       el.attribute('data-accept').content,
                          description: descriptions)
       end
     end
+
+    # requires loading details page for each confirmation
+    # https://github.com/bukson/steampy/blob/e9719c726273df2b0d703c2c6788bdda85c1e207/steampy/confirmation.py#L68
+    # def confirm_single(offerid)
+    #   puts "offerid: #{offerid}"
+    #   fetch.find { |conf| conf.id == offerid }.accept
+    # end
 
     private
 
@@ -57,6 +65,7 @@ module Steam
     end
 
     class Confirmation
+      attr_reader :id
       def initialize(parent, request, id:, key:, cancel:, accept:, description:)
         @parent = parent
         @id = id
