@@ -60,16 +60,16 @@ module Steam
     end
 
     def steamid32
-      to_steamid32 @steamid
-    end
-
-    def to_steamid32(id)
-      # lowest 32 bit of 64 bit steamid is actually a account id
-      id & 0xFFFFFFFF
+      Steamid.to_steamid64 @steamid
     end
 
     def get_my_inventory
       self.class.get_inventory(@steamid)
+    end
+
+    def get_recieved_offers
+      res = @request.get("#{Steam:COMMUNITY_URL}/profiles/#@steamid/tradeoffers/")
+      OffersParser::OffersParser.parse(res)
     end
 
     # @param partner_steamid [String] 64bit steamid
