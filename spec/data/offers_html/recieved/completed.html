@@ -1,0 +1,175 @@
+<div class="responsive_page_template_content">
+
+    <script type="text/javascript">
+        $J(function() {
+            $J(window).on('message', function(event) {
+                var origin = event.originalEvent.origin;
+                var data = event.originalEvent.data;
+
+                if (origin && data &&
+                    ('http://steamcommunity.com/'.indexOf(origin) == 0 || 'https://steamcommunity.com/'.indexOf(origin) == 0)) {
+                    if (data.type == 'accepted') {
+                        AddTradeOfferBanner(data.tradeofferid, 'Trade Accepted %s'.replace(/%s/, (new Date()).toLocaleString()), true);
+                    } else if (data.type == 'await_confirm') {
+                        AddTradeOfferBanner(data.tradeofferid, 'Awaiting Email Confirmation');
+                    } else if (data.type == 'location') {
+                        window.focus();
+                        window.location = data.url;
+                    }
+                }
+            });
+        });
+    </script>
+
+    <div class="pagecontent no_header profile_subpage_general">
+        <div class="profile_small_header_bg">
+            <div class="profile_small_header_texture">
+
+                <div class="profile_small_header_text">
+                    <span class="profile_small_header_name"><a class="whiteLink" href="https://steamcommunity.com/id/kkkek">PISOSEW</a></span>
+                    <span class="profile_small_header_arrow">&raquo;</span>
+                    <a class="whiteLink" href="https://steamcommunity.com/id/kkkek/inventory/"><span class="profile_small_header_location">Item Inventory</span></a>
+                    <span class="profile_small_header_arrow">&raquo;</span>
+                    <a class="whiteLink" href="https://steamcommunity.com/id/kkkek/tradeoffers/"><span class="profile_small_header_location">Trade Offers</span></a>
+
+                </div>
+                <a href="https://steamcommunity.com/id/kkkek">
+                    <div class="profile_small_header_avatar">
+                        <div class="playerAvatar medium offline">
+                            <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/2a/2a23d550178c51cbb8c11febcad23646e6ec2019_medium.jpg">
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="maincontent">
+            <div class="profile_leftcol">
+                <div class="nonresponsive_hidden">
+                    <div class="profile_subpage_selector">
+                        <a class="btn_small btn_darkblue_white_innerfade inner_bevel" href="https://steamcommunity.com/id/kkkek/tradeoffers">
+                            <span>Incoming Offers</span>
+                        </a>
+                        <a class="btn_small btn_grey_grey_outer_bevel" href="https://steamcommunity.com/id/kkkek/tradeoffers/sent">
+                            <span>Sent Offers</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="tradeoffer" id="tradeofferid_1603010224">
+                    <a href="javascript:ReportTradeScam( '76561198274819706', &quot;&amp;lt;script&amp;gt;console.log(1)&amp;lt;\/script&amp;gt;&quot; );" class="btn_grey_grey btn_medium ico_hover btn_report" title="Flag this as a suspected scam.">
+                        <span><i class="ico16 report"></i></span>
+                    </a>
+                    <div class="tradeoffer_partner">
+                        <div class="playerAvatar offline" data-miniprofile="314553978">
+                            <a href="https://steamcommunity.com/profiles/76561198274819706">
+                                <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/fe/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb.jpg">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="tradeoffer_header">
+                        &lt;script&gt;console.log(1)&lt;/script&gt; offered you a trade: </div>
+                    <div class="tradeoffer_items_ctn  inactive">
+                        <div class="tradeoffer_items primary">
+                            <div class="tradeoffer_items_avatar_ctn">
+                                <a class="tradeoffer_avatar playerAvatar tiny offline" href="https://steamcommunity.com/profiles/76561198274819706" data-miniprofile="314553978">
+                                    <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/fe/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb.jpg">
+                                </a>
+                            </div>
+                            <div class="tradeoffer_items_header">
+                                &lt;script&gt;console.log(1)&lt;/script&gt; offered: </div>
+                            <div class="tradeoffer_item_list">
+                                <div class="trade_item " style="" data-economy-item="classinfo/730/1385576714/188530139">
+                                    <img src="https://steamcommunity-a.akamaihd.net/economy/image/class/730/1385576714/96fx96f" srcset="https://steamcommunity-a.akamaihd.net/economy/image/class/730/1385576714/96fx96f 1x, https://steamcommunity-a.akamaihd.net/economy/image/class/730/1385576714/96fx96fdpx2x 2x">
+                                </div>
+                                <div class="trade_item " style="" data-economy-item="classinfo/730/310777712/302028390">
+                                    <img src="https://steamcommunity-a.akamaihd.net/economy/image/class/730/310777712/96fx96f" srcset="https://steamcommunity-a.akamaihd.net/economy/image/class/730/310777712/96fx96f 1x, https://steamcommunity-a.akamaihd.net/economy/image/class/730/310777712/96fx96fdpx2x 2x">
+                                </div>
+                                <div style="clear: left;"></div>
+                            </div>
+                        </div>
+                        <div class="tradeoffer_items_banner accepted">
+                            Trade Accepted 26 Oct, 2016 @ 9:58pm </div>
+                        <div class="tradeoffer_items secondary">
+                            <div class="tradeoffer_items_avatar_ctn">
+                                <a class="tradeoffer_avatar playerAvatar tiny offline" href="https://steamcommunity.com/id/kkkek" data-miniprofile="165368844">
+                                    <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/2a/2a23d550178c51cbb8c11febcad23646e6ec2019.jpg">
+                                </a>
+                            </div>
+                            <div class="tradeoffer_items_header">
+                                For your: </div>
+                            <div class="tradeoffer_item_list">
+                                <div style="clear: left;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tradeoffer_footer">
+                        <div style="clear: right;"></div>
+                    </div>
+                </div>
+                <div class="tradeoffer_rule"></div>
+            </div>
+            <div class="profile_rightcol">
+                <div class="responsive_local_menu">
+                    <div class="rightcol_controls">
+                        <div class="rightcol_controls_content">
+                            <div class="btn_darkblue_white_innerfade btn_medium new_trade_offer_btn responsive_OnClickDismissMenu" onclick="ShowFriendSelect( 'New Trade Offer...', StartTradeOffer );"><span>New Trade Offer...</span></div>
+                        </div>
+                        <div class="rightcol_controls_rule"></div>
+                        <div class="rightcol_controls_content">
+                            <a class="right_controls_large_block" href="https://steamcommunity.com/id/kkkek/tradeoffers/">
+                                <div class="right_controls_large_block_active_bg"></div>
+                                <div class="title">Incoming Offers</div>
+                                <div class="secondary">
+                                    (0 Pending)
+                                </div>
+                            </a>
+                            <div class="rightcol_controls_secondary_link_ctn">
+                                <a class="right_controls_secondary_link " href="https://steamcommunity.com/id/kkkek/tradeoffers/?history=1">
+    Incoming Offer History (25)			</a>
+                            </div>
+                        </div>
+                        <div class="rightcol_controls_rule"></div>
+                        <div class="rightcol_controls_content">
+                            <a class="right_controls_large_block" href="https://steamcommunity.com/id/kkkek/tradeoffers/sent/">
+                                <div class="title">Sent Offers</div>
+                                <div class="secondary">
+                                    (0 Pending)
+                                </div>
+                            </a>
+                            <div class="rightcol_controls_secondary_link_ctn">
+                                <a class="right_controls_secondary_link " href="https://steamcommunity.com/id/kkkek/tradeoffers/sent/?history=1">
+    Sent Offer History (146)			</a>
+                            </div>
+                        </div>
+                        <div class="rightcol_controls_rule"></div>
+                        <div class="rightcol_controls_content">
+                            <a class="whiteLink" href="https://steamcommunity.com/id/kkkek/inventoryhistory/">View Trade History</a>
+                        </div>
+                        <div class="rightcol_controls_rule"></div>
+                        <div class="rightcol_controls_content">
+                            <div class="rightcol_controls_secondary_link_ctn">
+                                <a class="whiteLink" href="https://steamcommunity.com/id/kkkek/tradeoffers/privacy">
+    Who can send me Trade Offers?			</a>
+                            </div>
+                        </div>
+                        <div class="rightcol_controls_rule"></div>
+                        <div class="rightcol_controls_content">
+                            <div class="rightcol_controls_secondary_link_ctn">
+                                <a class="whiteLink" href="https://steamcommunity.com/id/kkkek/tradeoffers/tradetopics">
+    Trading Topics			</a>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="rightcol_controls">
+                        <div class="rightcol_controls_content">
+                            <a class="whiteLink" href="https://support.steampowered.com/kb_article.php?ref=2178-QGJV-0708" target="_blank" rel="noreferrer">Frequently Asked Questions</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="clear: both;"></div>
+        </div>
+    </div>
+
+</div>
