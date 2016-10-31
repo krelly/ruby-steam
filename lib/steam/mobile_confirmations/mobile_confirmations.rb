@@ -16,12 +16,10 @@ module Steam
 
     def fetch
       res = @community["mobileconf/conf?#{generate_confirmation_url}"].get
-      puts res
       doc = Nokogiri::HTML res
       doc.css('[data-confid]').map do |el|
         selector = '.mobileconf_list_entry_description>div'
         descriptions = el.css(selector).map(&:content).join('. ')
-        puts "id: #{el.attribute('data-confid').content}"
         Confirmation.new(self,
                          @community,
                          id:           el.attribute('data-confid').content.to_i,
