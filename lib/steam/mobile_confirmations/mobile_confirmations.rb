@@ -2,7 +2,6 @@
 require 'base64'
 require 'openssl'
 require 'digest/sha1'
-require 'http'
 require 'nokogiri'
 require 'json'
 

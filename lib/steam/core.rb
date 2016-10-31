@@ -2,7 +2,6 @@
 require_relative 'two_factor.rb'
 require_relative 'login.rb'
 
-require 'http'
 require 'cgi'
 require 'json'
 require 'awesome_print'
@@ -21,24 +20,18 @@ module Steam
       @password = password
       @shared_secret = shared_secret
       @identity_secret = identity_secret
-
-      # cookies = {
-      #   sessionid: "698440498009b3a322bf08c2",
-      #   steamCountry: "UA%7C1a9c38cb3f3a3935dc17708f6994197e",
-      #   steamLogin: "76561198246811020%7C%7C5965F4372B9D485C04E4A18ED76C73B565EE285D",
-      #   steamLoginSecure: "***REMOVED***",
-      #   steamMachineAuth76561198125634572: "***REMOVED***",
-      #   steamMachineAuth76561198246811020: "***REMOVED***",
-      #   steamRememberLogin: "***REMOVED***",
-      #   timezoneOffset: "10800,0",
-      #   webTradeEligibility: "%7B%22allowed%22%3A1%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A2%2C%22max_sales_per_year%22%3A200%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D",
-      # }
     end
 
-    def login
-      @cookies, @steamid = Login.new(@account_name, @password, @shared_secret).login
+    def login(cookies = nil, steamid = nil)
+      if cookies && steamid
+        @cookies = cookies
+        @steamid = steamid
+      else
+        @cookies, @steamid = Login.new(@account_name, @password, @shared_secret).login
+      end
       @community = RestClient::Resource.new(Steam::COMMUNITY_URL, cookies: @cookies)
       @confirmations = MobileConfirmations.new(@identity_secret, @steamid, @community)
+      puts @cookies, @steamid
     end
 
     def fetch_confirmations
@@ -127,7 +120,7 @@ module Steam
     end
 
     class << self
-      def get_inventory(_steamid)
+      def get_inventory
         path = 'id/me/inventory/json/730/2'
         res = JSON.parse @community[path].get
         map_by_assetid res

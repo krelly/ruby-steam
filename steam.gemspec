@@ -13,7 +13,6 @@ Gem::Specification.new do |s|
   s.files       = Dir.glob("lib/**/*")
   s.metadata['allowed_push_host'] = 'https://gems.my-company.example'
 
-  s.add_dependency 'http'
   s.add_dependency 'json'
   s.add_dependency 'awesome_print'
   s.add_dependency 'nokogiri'
