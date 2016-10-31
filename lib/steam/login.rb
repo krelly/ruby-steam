@@ -9,13 +9,14 @@ class Login
     @shared_secret = shared_secret
   end
 
-
   def login
     captcha = ''
     captcha_id = '-1'
     begin
       res, cookies = send_login_request(captcha, captcha_id)
       cookies = perform_redirects(res, cookies)
+      puts "result cookies"
+      puts cookies
       return cookies, res['transfer_parameters']['steamid']
     rescue Steam::Error::CaptchaNeeded
       captcha = prompt_captcha(res['captcha_gid'])
@@ -25,6 +26,7 @@ class Login
   end
 
   private
+
   # {"success"=>true, "requires_twofactor"=>true, "login_complete"=>true,
   # "transfer_urls"=>["https://steamcommunity.com/login/transfer", "https://help.steampowered.com/login/transfer"],
   # "transfer_parameters"=>{"steamid"=>"76561198125634572", "token"=>"***REMOVED***",
@@ -33,41 +35,42 @@ class Login
   def perform_redirects(res, cookies)
     params = res['transfer_parameters']
     results = res['transfer_urls'].map do |url|
-      r = HTTP.cookies(cookies).post(url, form: params).cookies
+      RestClient.post(url, params, cookies: cookies).cookies
+      # r = HTTP.cookies(cookies).post(url, form: params).cookies
     end
-    results.map(&:cookies).reduce(:+)
+    # results.map(&:cookies).reduce(:+)
+    results.reduce(:merge)
   end
 
   def send_login_request(captcha, captcha_id)
-
     headers = {
-      :'User-Agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
+      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
     }
 
-    HTTP.persistent Steam::COMMUNITY_URL do |http|
-      # First send request without two-factor parameter
-      form = generate_login_form_data(captcha, captcha_id)
-      res = http.post('/login/dologin', form: form)
-      puts "first login: #{res.parse}"
-      # Now generate auth code and login second time
-      # Because it's how steam works xD
-      auth_code = Steam::TwoFactor.generate_auth_code(@shared_secret)
-      form = generate_login_form_data(captcha, captcha_id, auth_code)
-      res = http.cookies(res.cookies).post('/login/dologin', form: form)
+    # First send request without two-factor parameter
+    form = generate_login_form_data(captcha, captcha_id)
+    res = RestClient.post(Steam::COMMUNITY_URL + '/login/dologin', form)
+    # res = http.post('/login/dologin', form: form)
+    puts "first login: #{JSON.parse(res)}"
+    # Now generate auth code and login second time
+    # Because it's how steam works xD
+    auth_code = Steam::TwoFactor.generate_auth_code(@shared_secret)
+    form = generate_login_form_data(captcha, captcha_id, auth_code)
+    res = RestClient.post(Steam::COMMUNITY_URL + '/login/dologin', form, cookies: res.cookies)
 
-      puts "second login: #{res.parse}"
-      return res.parse, res.cookies
-    end
+    cookies = res.cookies
+    res = JSON.parse(res)
+    puts "second login: #{res}"
 
     if res['clear_password_field']
       raise Steam::Error::PasswordInvalid
     elsif res['captcha_needed']
       raise Steam::Error::CaptchaNeeded
-    elsif res['success']
-      raise !res['message']
+    elsif !res['success']
+      raise res['message']
     end
 
-    res
+    [res, cookies]
   end
 
   def generate_login_form_data(captcha = '', captcha_id = '-1', auth_code = '')
@@ -97,7 +100,9 @@ class Login
 
   def fetch_rsa_params
     get_rsa_url = "#{Steam::COMMUNITY_URL}/login/getrsakey?username=#{@account_name}"
-    res = HTTP.get(get_rsa_url).parse
+    res = JSON.parse(RestClient.get(get_rsa_url))
+    puts "from fetch_rsa_params #{res.inspect}"
+    # res = HTTP.get(get_rsa_url).parse
     pubkey_mod = res['publickey_mod'].hex
     pubkey_exp = res['publickey_exp'].hex
 

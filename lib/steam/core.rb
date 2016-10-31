@@ -36,11 +36,9 @@ module Steam
     end
 
     def login
-      cookies, steamid = Login.new(@account_name, @password, @shared_secret).login
-      @confirmations = MobileConfirmations.new(@identity_secret, steamid, cookies)
-      @steamid = steamid
-
-      set_cookies(cookies)
+      @cookies, @steamid = Login.new(@account_name, @password, @shared_secret).login
+      @community = RestClient::Resource.new(Steam::COMMUNITY_URL, cookies: @cookies)
+      @confirmations = MobileConfirmations.new(@identity_secret, @steamid, @community)
     end
 
     def fetch_confirmations
@@ -60,16 +58,16 @@ module Steam
     end
 
     def steamid32
-      Steamid.to_steamid64 @steamid
+      Steamid.to_steamid32 @steamid
     end
 
     def get_my_inventory
       self.class.get_inventory(@steamid)
     end
 
-    def get_recieved_offers
-      res = @request.get("#{Steam:COMMUNITY_URL}/profiles/#@steamid/tradeoffers/")
-      OffersParser::OffersParser.parse(res)
+    def get_sent_offers
+      res = @community['id/me/tradeoffers/sent/'].get
+      Steam::Parsers::OffersParser.parse res
     end
 
     # @param partner_steamid [String] 64bit steamid
@@ -99,7 +97,7 @@ module Steam
 
       formFields = {
         serverid: 1,
-        sessionid: @cookies['sessionid'][0],
+        sessionid: @cookies['sessionid'],
         partner: partner_steamid.to_s,
         tradeoffermessage: message,
         trade_offer_create_params: trade_offer_create_params.to_json,
@@ -107,32 +105,31 @@ module Steam
       }
 
       query = {
-        partner: to_steamid32(partner_steamid),
+        partner: Steam::Steamid.to_steamid32(partner_steamid),
         token: token,
         l: 'en'
       }
 
       referer = "#{Steam::TRADEOFFER_URL}/new/?#{URI.encode_www_form(query)}"
-      result = @request.headers(referer: referer)
-                       .post(Steam::TRADEOFFER_URL + '/new/send?l=en', form: formFields)
-                       .parse
+      path = '/tradeoffer/new/send?l=en'
+      result = JSON.parse @community[path].post(formFields, referer: referer)
       raise result['strError'] if result.key? 'strError'
-      if result['needs_mobile_confirmation']
-        @confirmations.confirm_single(result['tradeofferid'])
-      end
+      # if result['needs_mobile_confirmation']
+      #   @confirmations.confirm_single(result['tradeofferid'])
+      # end
       result['tradeofferid']
     end
 
     def cancel_offer(offer_id)
-      res  = @request.post("#{Steam::TRADEOFFER_URL}/#{offer_id}/cancel",
-                                form: { sessionid: @cookies['sessionid'][0] })
+      res = @community["tradeoffer/#{offer_id}/cancel"]
+            .post(sessionid: @cookies['sessionid'])
       res.parse
     end
 
     class << self
-      def get_inventory(steamid)
-        url = "https://steamcommunity.com/profiles/#{steamid}/inventory/json/730/2"
-        res = JSON.parse RestClient.get(url).body
+      def get_inventory(_steamid)
+        path = 'id/me/inventory/json/730/2'
+        res = JSON.parse @community[path].get
         map_by_assetid res
       end
 
@@ -145,14 +142,6 @@ module Steam
           inventory[assetid] = description
         end
       end
-    end
-
-    private
-
-    def set_cookies(cookies)
-      @request = HTTP.cookies(cookies)
-      @cookies = CGI::Cookie.parse HTTP::Cookie.cookie_value(cookies)
-      cookies
     end
   end
 end

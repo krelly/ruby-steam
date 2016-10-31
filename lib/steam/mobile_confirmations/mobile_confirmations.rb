@@ -4,25 +4,27 @@ require 'openssl'
 require 'digest/sha1'
 require 'http'
 require 'nokogiri'
+require 'json'
 
 module Steam
   class MobileConfirmations
-    def initialize(identity_secret, steamid, cookies)
+    def initialize(identity_secret, steamid, community)
       @identity_secret = identity_secret
       @steamid = steamid
       @device_id = generate_device_id(steamid)
-      @request = HTTP.cookies(cookies)
+      @community = community
     end
 
     def fetch
-      url = "#{Steam::COMMUNITY_URL}/mobileconf/conf?#{generate_confirmation_url}"
-      doc = Nokogiri::HTML(@request.get(url).to_s)
+      res = @community["mobileconf/conf?#{generate_confirmation_url}"].get
+      puts res
+      doc = Nokogiri::HTML res
       doc.css('[data-confid]').map do |el|
         selector = '.mobileconf_list_entry_description>div'
         descriptions = el.css(selector).map(&:content).join('. ')
         puts "id: #{el.attribute('data-confid').content}"
         Confirmation.new(self,
-                         @request,
+                         @community,
                          id:           el.attribute('data-confid').content.to_i,
                          key:          el.attribute('data-key').content,
                          cancel:       el.attribute('data-cancel').content,
@@ -66,14 +68,14 @@ module Steam
 
     class Confirmation
       attr_reader :id
-      def initialize(parent, request, id:, key:, cancel:, accept:, description:)
+      def initialize(parent, community, id:, key:, cancel:, accept:, description:)
         @parent = parent
         @id = id
         @key = key
         @cancel = cancel
         @accept = accept
         @description = description
-        @request = request
+        @community = community
       end
 
       def accept
@@ -94,8 +96,8 @@ module Steam
         }
         query_params = URI.encode_www_form(params)
         confirmation_url = @parent.send :generate_confirmation_url
-        url = "#{Steam::COMMUNITY_URL}/mobileconf/ajaxop?#{query_params}&#{confirmation_url}"
-        @request.get(url).parse
+        path = "mobileconf/ajaxop?#{query_params}&#{confirmation_url}"
+        JSON.parse @community[path].get
       end
     end
   end

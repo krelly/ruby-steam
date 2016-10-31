@@ -13,6 +13,7 @@ GEM
   specs:
     addressable (2.4.0)
     awesome_print (1.7.0)
+    diff-lcs (1.2.5)
     domain_name (0.5.20160826)
       unf (>= 0.0.5, < 1.0.0)
     http (2.0.3)
@@ -36,6 +37,19 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
+    rspec (3.5.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+    rspec-core (3.5.4)
+      rspec-support (~> 3.5.0)
+    rspec-expectations (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-mocks (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-support (3.5.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
@@ -44,6 +58,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  rspec
   steam!
 
 BUNDLED WITH
