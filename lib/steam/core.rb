@@ -120,9 +120,9 @@ module Steam
     end
 
     class << self
-      def get_inventory
-        path = 'id/me/inventory/json/730/2'
-        res = JSON.parse @community[path].get
+      def get_inventory(id)
+        url = "#{Steam::COMMUNITY_URL}/profiles/#{id}/inventory/json/730/2"
+        res = JSON.parse RestClient.get(url)
         map_by_assetid res
       end
 
