@@ -1,4 +1,7 @@
 require 'steam'
+require 'bundler'
+Bundler.require(:default, :development)
+
 RSpec.configure do |config|
   # Use color in STDOUT
   config.color = true
