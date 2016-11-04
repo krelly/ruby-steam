@@ -20,6 +20,7 @@ module Steam
       @password = password
       @shared_secret = shared_secret
       @identity_secret = identity_secret
+      @web_api = Steam::WebApi.new(api_key)
     end
 
     def login(cookies = nil, steamid = nil)

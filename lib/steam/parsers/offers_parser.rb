@@ -50,8 +50,12 @@ module Steam
                       .attr('data-miniprofile').text.to_i
         Steamid.to_steamid64(steamid32)
       end
-
-
+      # def self.item_info()
+      #   "itemhover/730/2/#{offer[:id]}?content_only=1&omit_owner=1&l=english&o=76561198246811020"
+      # end
+      # def parse_item_hover(res)
+      #   #code
+      # end
 
       def self.parse_items_block(el, inventory)
         el.map do |item|
