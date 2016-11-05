@@ -39,14 +39,6 @@ module Steam
       @confirmations.fetch
     end
 
-    def accept_confirmation(confirmation)
-      @confirmations.accept(confirmation)
-    end
-
-    def decline_confirmation(confirmation)
-      @confirmations.decline(confirmation)
-    end
-
     def notifications_count
       # https://steamcommunity.com/actions/GetNotificationCounts
     end
