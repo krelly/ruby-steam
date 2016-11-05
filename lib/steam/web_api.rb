@@ -19,6 +19,14 @@ module Steam
 
     def query_api(interface, api_method, method:, version: 1, **params)
       params[:key] = @api_key
+      # Steam Web API interprets boolean as int's true => 1 false =>
+      params.each do |k, v|
+        if v == true
+          params[k] = 1
+        elsif v == false
+          params[k] = 0
+        end
+      end
       url = "#{Steam::API_BASE_URL}/#{interface}/#{api_method}/v#{version}/"
       puts url
       res = RestClient::Request.execute(method: method, url: url,
