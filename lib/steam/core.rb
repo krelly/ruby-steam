@@ -59,9 +59,27 @@ module Steam
       self.class.get_inventory(@steamid)
     end
 
-    def get_sent_offers
-      res = @community['id/me/tradeoffers/sent/'].get
-      Steam::Parsers::OffersParser.parse res
+    # @param [Hash] params the options passed to steam
+    # @option params [Boolean] :get_sent_offers	get list of sent offers.
+    # @option params [Boolean] :get_received_offers get list of received offers.
+    # @option params [Boolean]:get_descriptions If set, the item display data
+    #  for the items included in the returned trade offers
+    #  will also be returned.
+    # @option params [String] :language The language to use when loading item
+    #  display data.
+    # @option params [Boolean] :active_only	get only offers which are still
+    #  active, or offers that have changed in state since the
+    #  time_historical_cutoff
+    # @option params [Boolean] :historical_only	get only offers which are
+    #  not active.
+    # @option params [Numeric]:time_historical_cutoff	When active_only is set,
+    #  offers updated since this time will also be returned
+    def get_offers(params)
+      @web_api.get('IEconService', 'GetTradeOffers', params)
+    end
+
+    def offer_details(tradeofferid)
+      @web_api.get('IEconService', 'GetTradeOffer', tradeofferid: tradeofferid)
     end
 
     # @param partner_steamid [String] 64bit steamid
