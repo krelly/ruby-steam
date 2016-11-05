@@ -5,3 +5,5 @@ float.js
 /Gemfile.lock
 /.bundle/
 *.gem
+.yardoc
+/doc/
