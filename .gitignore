@@ -7,3 +7,4 @@ float.js
 *.gem
 .yardoc
 /doc/
+.DS_Store
