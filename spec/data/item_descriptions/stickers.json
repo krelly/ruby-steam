@@ -1,0 +1,103 @@
+{
+    "appid": "730",
+    "classid": "679380707",
+    "instanceid": "188530170",
+    "icon_url": "-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpopujwezhjxszKeClW6c6lg4WOg8j5Nr_Yg2YfvpEgjrGT9tnwjVLn-Bc_Z2nzIYXGdVdvY1vX-gDokrrr18Po6ZrOz2wj5HeP2HiXAg",
+    "icon_url_large": "-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpopujwezhjxszKeClW6c6lg4WOg8j5Nr_Yg2Zu5MRjjeyPo9ikjAzmqEY5Nj_wJ9LGdgY-ZFuD_QDvw-3ohcfq78nNmyc37ycl42GdwUJyKz5d2A",
+    "icon_drag_url": "",
+    "name": "StatTrak™ P250 | Сверхновая",
+    "market_hash_name": "StatTrak™ P250 | Supernova (Field-Tested)",
+    "market_name": "StatTrak™ P250 | Сверхновая (После полевых испытаний)",
+    "name_color": "CF6A32",
+    "background_color": "",
+    "type": "Пистолет, StatTrak™, Запрещенное",
+    "tradable": 1,
+    "marketable": 1,
+    "commodity": 0,
+    "market_tradable_restriction": "7",
+    "descriptions": [{
+        "type": "html",
+        "value": "Внешний вид: После полевых испытаний"
+    }, {
+        "type": "html",
+        "value": " "
+    }, {
+        "type": "html",
+        "value": "Этот предмет использует технологию StatTrak™, которая помогает отслеживать определенные пункты статистики, выполненные владельцем.",
+        "color": "99ccff"
+    }, {
+        "type": "html",
+        "value": " "
+    }, {
+        "type": "html",
+        "value": "Этот предмет отслеживает количество подтвержденных убийств.",
+        "color": "CF6A32"
+    }, {
+        "type": "html",
+        "value": " "
+    }, {
+        "type": "html",
+        "value": "Пистолет P250 — огнестрельное оружие с высоким темпом стрельбы и низкой отдачей, представляющее собой относительно недорогой выбор против бронированных противников. С помощью аквапечати нанесен рисунок в виде космического узора с концентрическими кругами."
+    }, {
+        "type": "html",
+        "value": " "
+    }, {
+        "type": "html",
+        "value": "Коллекция «Прорыв»",
+        "color": "9da1a9",
+        "app_data": {
+            "def_index": "65535",
+            "is_itemset_name": 1
+        }
+    }, {
+        "type": "html",
+        "value": " "
+    }, {
+        "type": "html",
+        "value": "<br><div id=\"sticker_info\" name=\"sticker_info\" title=\"Sticker Details\" style=\"border: 2px solid rgb(102, 102, 102); border-radius: 6px; width=100; margin:4px; padding:8px;\"><center><img width=64 height=48 src=\"https:\/\/steamcdn-a.akamaihd.net\/apps\/730\/icons\/econ\/stickers\/community02\/trekt.4196b40a9b249582419029fabe7f2f1aba86724e.png\"><br>Sticker: Ти-Rekt<\/center><\/div>",
+        "app_data": {
+            "def_index": "65535"
+        }
+    }],
+    "actions": [{
+        "name": "Осмотреть в игре…",
+        "link": "steam:\/\/rungame\/730\/76561202255233023\/+csgo_econ_action_preview%20S%owner_steamid%A%assetid%D435879449400995078"
+    }],
+    "market_actions": [{
+        "name": "Осмотреть в игре…",
+        "link": "steam:\/\/rungame\/730\/76561202255233023\/+csgo_econ_action_preview%20M%listingid%A%assetid%D435879449400995078"
+    }],
+    "tags": [{
+        "internal_name": "CSGO_Type_Pistol",
+        "name": "Пистолет",
+        "category": "Type",
+        "category_name": "Тип"
+    }, {
+        "internal_name": "weapon_p250",
+        "name": "P250",
+        "category": "Weapon",
+        "category_name": "Оружие"
+    }, {
+        "internal_name": "set_community_4",
+        "name": "Коллекция «Прорыв»",
+        "category": "ItemSet",
+        "category_name": "Набор"
+    }, {
+        "internal_name": "strange",
+        "name": "StatTrak™",
+        "category": "Quality",
+        "color": "CF6A32",
+        "category_name": "Категория"
+    }, {
+        "internal_name": "Rarity_Mythical_Weapon",
+        "name": "Запрещенное",
+        "category": "Rarity",
+        "color": "8847ff",
+        "category_name": "Редкость"
+    }, {
+        "internal_name": "WearCategory2",
+        "name": "После полевых испытаний",
+        "category": "Exterior",
+        "category_name": "Оформление"
+    }]
+}
