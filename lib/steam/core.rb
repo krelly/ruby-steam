@@ -66,12 +66,26 @@ module Steam
     #  not active.
     # @option params [Numeric]:time_historical_cutoff	When active_only is set,
     #  offers updated since this time will also be returned
-    def get_offers(params)
+    def get_offers(params = {})
       @web_api.get('IEconService', 'GetTradeOffers', params)
     end
 
     def offer_details(tradeofferid)
-      @web_api.get('IEconService', 'GetTradeOffer', tradeofferid: tradeofferid)
+      @web_api.get('IEconService', 'GetTradeOffer',
+                   tradeofferid: tradeofferid, return_key: :offer)
+    end
+
+    def get_items(trade_id)
+      puts "URL: trade/#{trade_id}/receipt/"
+      begin
+        retries ||= 0
+        puts "try ##{retries}"
+        html = @community["trade/#{trade_id}/receipt/"].get
+        Steam::Parsers::RecieptParser.parse html
+      rescue Error::InvalidResponse
+        sleep 1
+        retry if (retries += 1) < 3
+      end
     end
 
     # @param partner_steamid [String] 64bit steamid
