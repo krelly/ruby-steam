@@ -28,11 +28,15 @@ module Steam
         end
       end
       url = "#{Steam::API_BASE_URL}/#{interface}/#{api_method}/v#{version}/"
-      puts url
       res = RestClient::Request.execute(method: method, url: url,
                                         headers: { params: params })
-
-      JSON.parse res
+      parsed = JSON.parse(res, symbolize_names: true)[:response]
+      # puts "query_api #{parsed}"
+      if params.key? :return_key
+        parsed[params[:return_key]]
+      else
+        parsed
+      end
     end
   end
 end
