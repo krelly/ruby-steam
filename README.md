@@ -16,3 +16,21 @@
 - https://dev.doctormckay.com/topic/332-identifying-steam-items/
 - <a href="https://lab.xpaw.me/steam_api_documentation.html" target="_blank">Самый полный список методов апи (некоторые  недокументированные)</a>
 - <a href="https://developer.valvesoftware.com/wiki/Steam_Web_API/Feedback#CS:GO_Weapon_Images" target="_blank">некоторые баги/особенности апи</a>
+
+
+## Item Rarity
+- Consumer grade (white)
+- Industrial grade (light blue)
+- Mil-spec (darker blue)
+- Restricted (purple)
+- Classified (pinkish purple)
+- Covert (red)
+- Exceedingly Rare ★ (gold)
+- Contraband (light orange) – discontinued skins
+
+## Item Exteriors
+- Battle-Scarred – [BS]
+- Well-Worn – [WW]
+- Field-Tested – [FT]
+- Minimal Wear – [MW]
+- Factory New – [FN]
