@@ -5,18 +5,25 @@ module Steam
     class ItemDescriptionParser
       def self.parse(item_info)
         descriptions = item_info['descriptions']
-        # if descriptions['']
-
-        # end
-        descriptions.each do |description|
+        item_info['stickers'] = []
+        descriptions.map do |description|
           case description['value']
-          when /sticker_info/
-            # item has stickers
-            puts 'has stickers'
-            parse_sticker_details(description['value'])
+            when /sticker_info/
+              # item has stickers
+              item_info['stickers'].concat parse_sticker_details(description['value'])
           end
         end
-        parse_tags(item_info['tags'])
+        item_info['tags'] = parse_tags(item_info['tags'])
+        item_info['item_name'] = item_name(item_info['market_hash_name'])
+        item_info
+      end
+
+      def self.item_name(market_hash_name)
+        # "StatTrak™ P250 | Supernova (Field-Tested)"
+        # Sticker | One Shot One Kill
+        # Item name - skin/sticker/music kit name
+        /(.+?)\|(?<name>.+?[^\(]*)/ =~ market_hash_name
+        name.strip
       end
 
       def self.parse_sticker_details(html)
@@ -33,8 +40,8 @@ module Steam
         # </div>
         info = Nokogiri::HTML(html).css('#sticker_info')
         images = info.css('img').map { |i| i.attr('src') }
-        sticker_names = info.css('center>br').text
-        [images, sticker_names]
+        sticker_names = info.xpath('//br/following-sibling::text()[1]').text.split(',')
+        [sticker_names,images].transpose.map {|name,image| Hash[name.strip, image] }
       end
 
       def self.parse_description(_descriptions)
@@ -50,7 +57,7 @@ module Steam
       # Quality
       def self.parse_tags(tags)
         tags.each_with_object({}) do |tag, obj|
-          obj[tag['category'].underscore] = tag['name']
+          obj[tag['category'].underscore] = tag['internal_name'] || tag['name']
         end
       end
     end
