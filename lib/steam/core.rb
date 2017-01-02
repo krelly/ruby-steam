@@ -10,6 +10,7 @@ require 'rest-client'
 module Steam
   class Bot
     attr_reader :steamid
+    attr_reader :web_api
     # @param account_name [String] your Steam account name
     # @param password [String] your Steam password
     # @param shared_secret [String]
@@ -32,7 +33,7 @@ module Steam
       end
       @community = RestClient::Resource.new(Steam::COMMUNITY_URL, cookies: @cookies)
       @confirmations = MobileConfirmations.new(@identity_secret, @steamid, @community)
-      puts @cookies, @steamid
+      return @cookies, @steamid
     end
 
     def fetch_confirmations
@@ -70,6 +71,7 @@ module Steam
       @web_api.get('IEconService', 'GetTradeOffers', params)
     end
 
+
     def offer_details(tradeofferid)
       @web_api.get('IEconService', 'GetTradeOffer',
                    tradeofferid: tradeofferid, return_key: :offer)
@@ -81,7 +83,8 @@ module Steam
         retries ||= 0
         puts "try ##{retries}"
         html = @community["trade/#{trade_id}/receipt/"].get
-        Steam::Parsers::RecieptParser.parse html
+        items_info = Steam::Parsers::RecieptParser.parse html
+        items_info.map{ |i| Steam::Parsers::ItemDescriptionParser.parse(i)}
       rescue Error::InvalidResponse
         sleep 1
         retry if (retries += 1) < 3
@@ -152,6 +155,9 @@ module Steam
       end
 
       private
+      def get_item_description(descriptions,classid,instanceid)
+        descriptions.select {|d| d[:classid] == classid && d[:instanceid] == instanceid}
+      end
 
       def map_by_assetid(res)
         res['rgInventory'].each_with_object({}) do |(assetid, data), inventory|
