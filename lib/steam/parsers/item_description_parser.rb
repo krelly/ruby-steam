@@ -40,7 +40,7 @@ module Steam
         # </div>
         info = Nokogiri::HTML(html).css('#sticker_info')
         images = info.css('img').map { |i| i.attr('src') }
-        sticker_names = info.xpath('//br/following-sibling::text()[1]').text.split(',')
+        sticker_names = info.xpath('//br/following-sibling::text()[1]').text.sub(/^Sticker:/,'').split(',')
         [sticker_names,images].transpose.map {|name,image| Hash[name.strip, image] }
       end
 
