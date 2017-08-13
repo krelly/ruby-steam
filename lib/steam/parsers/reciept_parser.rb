@@ -9,29 +9,29 @@ module Steam
         unless script[1]
           doc = Nokogiri::HTML(html)
           message = doc.css('#mainContent .received_items_header .h1')[1].text
-          # If items was but js response is empty that means we got
-          # malformed response
+          # If page contains html and inline js script has no oItem variable
+          # means that response malformed
           raise Error::InvalidResponse if /\d+ new items acquired/ =~ message
         end
 
-        js = <<JS
-        var items = [];
-        var UserYou;
-        function BuildHover(str, item) {
-         items.push(item);
-        }
-        function $() {
-         return {
-           show: function() {}
-         };
-        }
-        #{script[1]};
-        json = JSON.stringify(items)
-JS
+        js = <<~JS
+          var items = [];
+          var UserYou;
+          function BuildHover(str, item) {
+            items.push(item);
+          }
+          function $() {
+           return {
+             show: function() {}
+           };
+          }
+          #{script[1]};
+          json = JSON.stringify(items)
+        JS
         cxt = V8::Context.new
         cxt.eval(js)
-        items = JSON.parse(cxt.scope.json, symbolize_names: true)
-        # id field is not standart,
+        items = JSON.parse(cxt.scope.json)
+        # id field is not standard,
         # CEcon_Asset says that it should be named assetid
         # details:
         # https://developer.valvesoftware.com/wiki/Steam_Web_API/IEconService
