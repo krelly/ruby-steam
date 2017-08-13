@@ -24,7 +24,7 @@ module Steam
     end
 
     def to_s
-      as_64
+      as_64.to_s
     end
   end
 end

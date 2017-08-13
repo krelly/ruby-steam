@@ -6,9 +6,11 @@ require 'cgi'
 require 'json'
 require 'awesome_print'
 require 'rest-client'
+require 'wisper'
 
 module Steam
   class Bot
+    include Wisper::Publisher
     attr_reader :steamid
     attr_reader :web_api
     # @param account_name [String] your Steam account name
