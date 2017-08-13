@@ -64,7 +64,7 @@ class Login
     puts "second login: #{res}"
 
     if res['clear_password_field']
-      raise Steam::Error::PasswordInvalid
+      raise Steam::Error::InvalidPassword
     elsif res['captcha_needed']
       raise Steam::Error::CaptchaNeeded
     elsif !res['success']
