@@ -1,13 +1,30 @@
 module Steam
-  module Steamid
-    STEAMID_CONVERSION_BASE = 76_561_197_960_265_728
-    def self.to_steamid64(id32)
-      id32 + STEAMID_CONVERSION_BASE
+  class SteamID
+    STEAMID_CONVERSION_BASE = 76561197960265728
+
+    def initialize(steamid64)
+      @steamid64 = steamid64
     end
 
-    def self.to_steamid32(id64)
-      # lowest 32 bit of 64 bit steamid is actually a account id
-      id64 & 0xFFFFFFFF
+    def self.from_vanity_url(web_api, vanity_url)
+      self.new(web_api.get('ISteamUser', 'ResolveVanityURL', vanityurl: vanity_url)[:steamid])
+    end
+
+    def self.from_steamid32(steamid32)
+      self.new(to_steamid64(steamid32))
+    end
+
+    def as_64
+      @steamid64
+    end
+
+    def as_32
+      # lowest 32 bit of 64 bit steamid is a account id
+      @steamid64 & 0xFFFFFFFF
+    end
+
+    def to_s
+      as_64
     end
   end
 end

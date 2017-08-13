@@ -33,4 +33,44 @@ module Steam
     # inventories and will be automatically delivered in the future.
     IN_ESCROW = 11
   end
+
+  # TODO: autogenerate this from steam protobuf
+  # https://github.com/SteamRE/SteamKit/blob/afda0753a3894c5c1fc4056aaf27ecc3f83426cb/SteamKit2/SteamKit2/Base/Generated/SteamLanguage.cs
+  module Currency
+    Invalid = 0
+    USD = 1
+    GBP = 2
+    EUR = 3
+    CHF = 4
+    RUB = 5
+    PLN = 6
+    BRL = 7
+    JPY = 8
+    NOK = 9
+    IDR = 10
+    MYR = 11
+    PHP = 12
+    SGD = 13
+    THB = 14
+    VND = 15
+    KRW = 16
+    TRY = 17
+    UAH = 18
+    MXN = 19
+    CAD = 20
+    AUD = 21
+    NZD = 22
+    CNY = 23
+    INR = 24
+    CLP = 25
+    PEN = 26
+    COP = 27
+    ZAR = 28
+    HKD = 29
+    TWD = 30
+    SAR = 31
+    AED = 32
+    SEK = 33
+    Max = 34
+  end
 end
