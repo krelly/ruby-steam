@@ -17,7 +17,8 @@ class Login
       cookies = perform_redirects(res, cookies)
       puts "result cookies"
       puts cookies
-      return cookies, res['transfer_parameters']['steamid']
+      id = res['transfer_parameters']['steamid']
+      return cookies, Steam::SteamID.new(id)
     rescue Steam::Error::CaptchaNeeded
       captcha = prompt_captcha(res['captcha_gid'])
       captcha_id = res['captcha_gid']
