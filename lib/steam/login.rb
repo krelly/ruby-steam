@@ -5,6 +5,7 @@ Dir.glob(__dir__ + '/../core_extensions/**/*.rb', &method(:require))
 
 module Steam
   class Login
+    include Logging
 
     def initialize(account_name, password, shared_secret)
       @account_name = account_name

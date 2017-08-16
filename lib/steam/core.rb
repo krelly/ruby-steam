@@ -10,7 +10,9 @@ require 'wisper'
 
 module Steam
   class Bot
+    include Logging
     include Wisper::Publisher
+
     attr_reader :steamid
     attr_reader :web_api
     attr_reader :cookies
@@ -80,7 +82,7 @@ module Steam
       logger.debug "URL: trade/#{trade_id}/receipt/"
       begin
         retries ||= 0
-        puts "try ##{retries}"
+        logger.debug "try ##{retries}"
         html = @community["trade/#{trade_id}/receipt/"].get
         items_info = Steam::Parsers::RecieptParser.parse html
         items_info.map{ |i| Steam::Parsers::ItemDescriptionParser.parse(i)}
