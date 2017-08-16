@@ -76,8 +76,8 @@ module Steam
                    tradeofferid: tradeofferid, return_key: :offer)
     end
 
-    def get_items(trade_id)
-      puts "URL: trade/#{trade_id}/receipt/"
+    def get_recieved_items(trade_id)
+      logger.debug "URL: trade/#{trade_id}/receipt/"
       begin
         retries ||= 0
         puts "try ##{retries}"
@@ -90,8 +90,8 @@ module Steam
       end
     end
 
-    # @param partner_steamid [String] 64bit steamid
-    def send_trade_offer(partner_steamid:, token:, items_to_give:, items_to_receive:, message:'')
+    # @param steamid [String] 64bit steamid
+    def send_trade_offer(steamid:, token:, items_from_me:, items_from_them:, message:'')
       format_items = lambda do |assetid|
         {
           appid: 730,
@@ -101,14 +101,14 @@ module Steam
         }
       end
 
-      items_to_give.map! &format_items
-      items_to_receive.map! &format_items
+      items_from_me.map! &format_items
+      items_from_them.map! &format_items
 
       tradeoffer = {
         newversion: true,
         version: 2,
-        me: { assets: items_to_give, currency: [], ready: false },
-        them: { assets: items_to_receive, currency: [], ready: false }
+        me: {assets: items_from_me, currency: [], ready: false },
+        them: {assets: items_from_them, currency: [], ready: false }
       }
 
       trade_offer_create_params = {
@@ -144,6 +144,10 @@ module Steam
       res = @community["tradeoffer/#{offer_id}/cancel"]
             .post(sessionid: @cookies['sessionid'])
       res.parse
+    end
+
+    def tradeoffers_summary
+      @web_api.get('GetTradeOffersSummary')
     end
 
     class << self
