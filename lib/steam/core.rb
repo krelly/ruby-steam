@@ -13,6 +13,7 @@ module Steam
     include Wisper::Publisher
     attr_reader :steamid
     attr_reader :web_api
+    attr_reader :cookies
     # @param account_name [String] your Steam account name
     # @param password [String] your Steam password
     # @param shared_secret [String]
