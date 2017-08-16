@@ -9,11 +9,11 @@ module Steam
 
     ## Generic methods
     def post(*args, **params)
-      query_api(*args, params.merge(method: :post))
+      query_api(*args, params.merge(http_method: :post))
     end
 
     def get(*args, **params)
-      query_api(*args, params.merge(method: :get))
+      query_api(*args, params.merge(http_method: :get))
     end
 
     ## Methods that require additional response processing
@@ -39,7 +39,7 @@ module Steam
 
     private
 
-    def query_api(interface, api_method, method:, version: 1, **params)
+    def query_api(interface, api_method, http_method:, version: 1, **params)
       params[:key] = @api_key
       # Steam Web API interprets boolean as int's true => 1 false =>
       params.each do |k, v|
@@ -50,7 +50,7 @@ module Steam
         end
       end
       url = "#{Steam::API_BASE_URL}/#{interface}/#{api_method}/v#{version}/"
-      res = RestClient::Request.execute(method: method, url: url,
+      res = RestClient::Request.execute(method: http_method, url: url,
                                         headers: {params: params})
       parsed = JSON.parse(res, symbolize_names: true)
       parsed = parsed[:response] if parsed.key? :response
