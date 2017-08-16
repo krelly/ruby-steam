@@ -100,7 +100,11 @@ module Steam
       end
     end
 
-    # @param steamid [String] 64bit steamid
+    # @param steamid [SteamID] user steamid which will recieve offer
+    # @param token [String] tradeoffer token
+    # @param items_from_me [Array<Integer>] array of item assetids that you will loose after trade
+    # @param items_from_them [Array<Integer>] array of item assetids that you will get after trade
+    # @param message [String] message attached to tradeoffer
     def send_trade_offer(steamid:, token:, items_from_me:, items_from_them:, message:'')
       format_items = lambda do |assetid|
         {
