@@ -53,6 +53,14 @@ module Steam
       self.class.get_inventory(@steamid)
     end
 
+    # Get counts of pending and new trade offers
+    def tradeoffers_summary
+      request_time = Time.now
+      summary = @web_api.get('IEconService', 'GetTradeOffersSummary', time_last_visit: @last_visit)
+      @last_visit = request_time.to_i
+      summary
+    end
+
     # @param [Hash] params the options passed to steam
     # @option params [Boolean] :get_sent_offers	get list of sent offers.
     # @option params [Boolean] :get_received_offers get list of received offers.
@@ -146,10 +154,6 @@ module Steam
       res = @community["tradeoffer/#{offer_id}/cancel"]
             .post(sessionid: @cookies['sessionid'])
       res.parse
-    end
-
-    def tradeoffers_summary
-      @web_api.get('GetTradeOffersSummary')
     end
 
     class << self
