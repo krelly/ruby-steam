@@ -26,10 +26,10 @@ module Steam
       @web_api = Steam::WebApi.new(api_key)
     end
 
-    def login(cookies = nil, steamid = nil)
-      if cookies && steamid
+    def login(cookies = nil, id64 = nil)
+      if cookies && id64
         @cookies = cookies
-        @steamid = steamid
+        @steamid = SteamID.new(id64)
       else
         @cookies, @steamid = Login.new(@account_name, @password, @shared_secret).login
       end
@@ -44,10 +44,6 @@ module Steam
 
     def notifications_count
       # https://steamcommunity.com/actions/GetNotificationCounts
-    end
-
-    def steamid32
-      Steamid.to_steamid32 @steamid
     end
 
     def get_my_inventory
@@ -121,14 +117,14 @@ module Steam
       formFields = {
         serverid: 1,
         sessionid: @cookies['sessionid'],
-        partner: partner_steamid.to_s,
+        partner: steamid,
         tradeoffermessage: message,
         trade_offer_create_params: trade_offer_create_params.to_json,
         json_tradeoffer: tradeoffer.to_json
       }
 
       query = {
-        partner: Steam::Steamid.to_steamid32(partner_steamid),
+        partner: steamid.as_32,
         token: token,
         l: 'en'
       }

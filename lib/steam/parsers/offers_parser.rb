@@ -46,9 +46,9 @@ module Steam
       end
 
       def self.get_partner_id(el)
-        steamid32 = el.css('.tradeoffer_items.secondary .tradeoffer_avatar')
+        id32 = el.css('.tradeoffer_items.secondary .tradeoffer_avatar')
                       .attr('data-miniprofile').text.to_i
-        Steamid.to_steamid64(steamid32)
+        SteamID.from_steamid32(id32)
       end
       # def self.item_info()
       #   "itemhover/730/2/#{offer[:id]}?content_only=1&omit_owner=1&l=english&o=76561198246811020"
