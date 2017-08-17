@@ -45,13 +45,25 @@ module Steam
               'User-Agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
       }
 
+      # Generate 2FA code
+      # TLDR: it should be created prior to sending first request
+
+      # Long: Codes are generated every 30s.
+      # Steam probalby stores time of the first request, and only codes that are generated in same (or previous) 30s time
+      # interval in which request to /login/dologin was send considered to be valid.
+      # Generating codes after first request may result in unsuccessfull login
+      # Consider: first request has been made for at hh:mm:29 and code was generated AFTER this at second 31, Steam will
+      # threat this code as invalid because it was generated too late
+
+
+      auth_code = Steam::TwoFactor.generate_auth_code(@shared_secret)
+
       # First send request without two-factor parameter
       form = generate_login_form_data(captcha, captcha_id)
       res = RestClient.post(Steam::COMMUNITY_URL + '/login/dologin', form)
 
       # Now generate auth code and send request to '/login' second time
       #  ¯\_(ツ)_/¯ Basic steam
-      auth_code = Steam::TwoFactor.generate_auth_code(@shared_secret)
       form = generate_login_form_data(captcha, captcha_id, auth_code)
       res = RestClient.post(Steam::COMMUNITY_URL + '/login/dologin', form, cookies: res.cookies)
 
