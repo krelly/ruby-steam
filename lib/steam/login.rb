@@ -74,6 +74,8 @@ module Steam
         raise Steam::Error::InvalidPassword
       elsif res['captcha_needed']
         raise Steam::Error::CaptchaNeeded
+      elsif res['requires_twofactor']
+        raise Steam::Error::Invalid2FA
       elsif !res['success']
         raise res['message']
       end
