@@ -108,6 +108,10 @@ module Steam
     def send_trade_offer(steamid:, token:, items_from_me:, items_from_them:, message:'')
       # TODO: handling situation when offer wasnt sent/or recieved responce was incorrect,
       # TODO:     e.g.: steam respond with error/request timeouted but tradeoffer was sent
+      if @steamid == steamid
+        raise Error::InvalidSteamID, "Cant send offer to myself"
+      end
+
       format_items = lambda do |assetid|
         {
           appid: 730,

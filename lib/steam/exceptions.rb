@@ -4,5 +4,6 @@ module Steam
     class Invalid2FA < StandardError; end
     class CaptchaNeeded < StandardError; end
     class InvalidResponse < StandardError; end
+    class InvalidSteamID < StandardError; end
   end
 end
