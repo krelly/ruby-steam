@@ -3,7 +3,7 @@ module Steam
     STEAMID_CONVERSION_BASE = 76561197960265728
 
     def initialize(steamid64)
-      @steamid64 = steamid64
+      @steamid64 = Integer(steamid64)
     end
 
     def self.from_vanity_url(web_api, vanity_url)
@@ -25,6 +25,10 @@ module Steam
 
     def to_s
       as_64.to_s
+    end
+
+    def ==(other)
+      @steamid64 == other.as_64
     end
   end
 end
