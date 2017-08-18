@@ -106,6 +106,8 @@ module Steam
     # @param items_from_them [Array<Integer>] array of item assetids that you will get after trade
     # @param message [String] message attached to tradeoffer
     def send_trade_offer(steamid:, token:, items_from_me:, items_from_them:, message:'')
+      # TODO: handling situation when offer wasnt sent/or recieved responce was incorrect,
+      # TODO:     e.g.: steam respond with error/request timeouted but tradeoffer was sent
       format_items = lambda do |assetid|
         {
           appid: 730,
