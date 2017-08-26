@@ -38,7 +38,7 @@ module Steam
       end
       @community = RestClient::Resource.new(Steam::COMMUNITY_URL, cookies: @cookies)
       @confirmations = MobileConfirmations.new(@identity_secret, @steamid, @community)
-      return @cookies, @steamid
+      self
     end
 
     def fetch_confirmations
@@ -138,7 +138,7 @@ module Steam
       formFields = {
         serverid: 1,
         sessionid: @cookies['sessionid'],
-        partner: steamid,
+        partner: steamid.as_64,
         tradeoffermessage: message,
         trade_offer_create_params: trade_offer_create_params.to_json,
         json_tradeoffer: tradeoffer.to_json
