@@ -10,7 +10,7 @@ module Steam
     end
 
     def price_overview(item_name)
-      get('priceoverview', market_hash_name: item_name)
+      res = get('priceoverview', market_hash_name: item_name)
     end
 
     def price_history(item_name, period = :daily)
