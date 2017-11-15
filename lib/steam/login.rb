@@ -112,10 +112,11 @@ module Steam
       get_rsa_url = "#{Steam::COMMUNITY_URL}/login/getrsakey?username=#{@account_name}"
       res = JSON.parse(RestClient.get(get_rsa_url))
       # res = HTTP.get(get_rsa_url).parse
-      pubkey_mod = res['publickey_mod'].hex
-      pubkey_exp = res['publickey_exp'].hex
+      modulus = res['publickey_mod'].hex
+      exponent = res['publickey_exp'].hex
 
-      rsa_keypair = OpenSSL::PKey::RSA.construct(pubkey_mod, pubkey_exp)
+      seq = OpenSSL::ASN1::Sequence.new([OpenSSL::ASN1::Integer.new(modulus), OpenSSL::ASN1::Integer.new(exponent)])
+      rsa_keypair = OpenSSL::PKey::RSA.new(seq.to_der)
       [rsa_keypair, res['timestamp']]
     end
 
