@@ -13,9 +13,13 @@ Gem::Specification.new do |s|
   s.files       = Dir.glob("lib/**/*")
   s.metadata['allowed_push_host'] = 'https://gems.my-company.example'
 
-  s.add_dependency 'json', '~> 2.0'
   s.add_dependency 'awesome_print'
+  s.add_dependency 'bindata'
+  s.add_dependency 'eventmachine'
+  s.add_dependency 'faye-websocket', '~> 0.10.7'
+  s.add_dependency 'json', '~> 2.0'
   s.add_dependency 'nokogiri'
+  s.add_dependency 'protobuf', '3.8.2'
   s.add_dependency 'rest-client'
   s.add_dependency 'therubyracer'
   s.add_dependency 'wisper', '~> 2.0'
