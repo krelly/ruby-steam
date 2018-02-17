@@ -4,3 +4,6 @@ Style/FrozenStringLiteralComment:
     Enabled: false
 Style/NumericLiterals:
     Enabled: false
+AllCops:
+  Exclude:
+    - 'lib/steam/client/resources/**/*'
