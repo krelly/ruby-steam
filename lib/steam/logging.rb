@@ -16,7 +16,10 @@ module Logging
       end
       l
     end
+  end
 
+  def self.logger=(logger)
+    @logger = logger
   end
 end
 
