@@ -3,8 +3,12 @@ require 'rest-client'
 
 module Steam
   class WebApi
-    def initialize(api_key)
-      @api_key = api_key
+    def initialize(api_key = nil)
+      if api_key.nil?
+        @anonymous = true
+      else
+        @api_key = api_key
+      end
     end
 
     ## Generic methods
@@ -40,7 +44,7 @@ module Steam
     private
 
     def query_api(interface, api_method, http_method:, version: 1, **params)
-      params[:key] = @api_key
+      params[:key] = @api_key if !@anonymous
       # Steam Web API interprets boolean as int's true => 1 false =>
       params.each do |k, v|
         if v == true
