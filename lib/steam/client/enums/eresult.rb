@@ -2,6 +2,8 @@
 
 module Enum
   module EResult
+    extend EnumHelper
+
     Invalid = 0
 
     OK = 1

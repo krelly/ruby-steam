@@ -1,6 +1,8 @@
 # extracted from emsg.steamd
 
 module EMsg
+  extend EnumHelper
+
   Invalid = 0
   Multi = 1
   ProtobufWrapped = 2

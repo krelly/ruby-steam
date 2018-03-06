@@ -43,8 +43,7 @@ class WebSocketConnection
     )
     header = MsgHdrProtoBuf.new(msg: emsg, proto: proto.encode).to_binary_s
     body = Steam::PROTOBUF_HANDLERS[emsg].new(body_params).encode
-    emsg_name = EMsg.constants.find { |k| EMsg.const_get(k) == emsg }
-    logger.debug "Sending message - EMsg:#{emsg_name}(#{emsg})"
+    logger.debug "Sending message - EMsg:#{EMsg.key(emsg)}(#{emsg})"
     @ws.send((header + body).unpack('C*'))
   end
 
@@ -72,8 +71,7 @@ class WebSocketConnection
                MsgHdrProtoBuf.read(packet)
              end
     emsg = header[:msg]
-    emsg_name = EMsg.constants.find { |k| EMsg.const_get(k) == emsg }
-    logger.debug "Recieved message - EMsg:#{emsg_name}(#{emsg})"
+    logger.debug "Recieved message - EMsg:#{EMsg.key(emsg)}(#{emsg})"
 
     if emsg == EMsg::Multi # packet contains several EMsg, send together
       cmsg = SteamCommunity::Internal::CMsgMulti.decode_from(packet)
@@ -82,7 +80,7 @@ class WebSocketConnection
       decode_messsage(EmbeddedPacket.read(body)[:data]) until body.eof?
       return
     elsif !Steam::PROTOBUF_HANDLERS.key?(emsg)
-      return logger.debug "Dont know how to decode EMsg:#{emsg_name}(#{emsg})"
+      return logger.debug "Dont know how to decode EMsg:#{EMsg.key(emsg)}(#{emsg})"
     end
 
     header = SteamCommunity::Internal::CMsgProtoBufHeader.decode(header[:proto])
@@ -96,7 +94,7 @@ class WebSocketConnection
         @client_instance_id = body.client_instance_id
         set_interval(body.out_of_game_heartbeat_seconds) { send(EMsg::ClientHeartBeat) }
       end
-      logger.debug "ClientLogOnResponse: #{Enum::EResult.constants.find { |k| Enum::EResult.const_get(k) == body[:eresult] }}"
+      logger.debug "ClientLogOnResponse: #{Enum::EResult.key(body[:eresult])}"
       # TODO: these require additional processing?
       # when EMsg::ClientVACBanStatus
       # when EMsg::ClientUpdateMachineAuth
