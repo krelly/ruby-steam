@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.email       = 'itwilnotbeasy@gmail.com'
   s.files       = Dir.glob("lib/**/*")
   s.metadata['allowed_push_host'] = 'https://gems.my-company.example'
+  s.required_ruby_version = '>= 2.4'
 
   s.add_dependency 'awesome_print'
   s.add_dependency 'bindata'
