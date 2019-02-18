@@ -19,7 +19,7 @@ module Steam
       begin
         res, cookies = send_login_request(captcha, captcha_id)
         cookies = perform_redirects(res, cookies)
-        puts "result cookies"
+        puts 'result cookies'
         logger.debug cookies
         id = res['transfer_parameters']['steamid']
         return cookies, Steam::SteamID.new(id)
@@ -41,10 +41,6 @@ module Steam
     end
 
     def send_login_request(captcha, captcha_id)
-      headers = {
-              'User-Agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
-      }
-
       # Generate 2FA code
       # TLDR: it should be created prior to sending first request
 
@@ -54,7 +50,6 @@ module Steam
       # Generating codes after first request may result in unsuccessfull login
       # Consider: first request has been made for at hh:mm:29 and code was generated AFTER this at second 31, Steam will
       # threat this code as invalid because it was generated too late
-
 
       auth_code = Steam::TwoFactor.generate_auth_code(@shared_secret)
 
@@ -87,17 +82,17 @@ module Steam
       require 'date'
       keypair, timestamp = fetch_rsa_params
       {
-              password: encrypt_password(keypair),
-              username: @account_name,
-              twofactorcode: auth_code,
-              emailauth: '',
-              loginfriendlyname: 'defaultSteamBotMachine',
-              captchagid: captcha_id,
-              captcha_text: captcha,
-              emailsteamid: '',
-              rsatimestamp: timestamp,
-              remember_login: 'false',
-              donotcache: DateTime.now.strftime('%Q') # Unix time in ms
+        password: encrypt_password(keypair),
+        username: @account_name,
+        twofactorcode: auth_code,
+        emailauth: '',
+        loginfriendlyname: 'defaultSteamBotMachine',
+        captchagid: captcha_id,
+        captcha_text: captcha,
+        emailsteamid: '',
+        rsatimestamp: timestamp,
+        remember_login: 'false',
+        donotcache: DateTime.now.strftime('%Q') # Unix time in ms
       }
     end
 

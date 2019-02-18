@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'two_factor.rb'
 require_relative 'login.rb'
 
@@ -49,7 +50,7 @@ module Steam
       # https://steamcommunity.com/actions/GetNotificationCounts
     end
 
-    def get_my_inventory
+    def my_inventory
       self.class.get_inventory(@steamid)
     end
 
@@ -62,24 +63,23 @@ module Steam
     end
 
     # @param [Hash] params the options passed to steam
-    # @option params [Boolean] :get_sent_offers	get list of sent offers.
+    # @option params [Boolean] :get_sent_offers  get list of sent offers.
     # @option params [Boolean] :get_received_offers get list of received offers.
-    # @option params [Boolean]:get_descriptions If set, the item display data
+    # @option params [Boolean] :get_descriptions If set, the item display data
     #  for the items included in the returned trade offers
     #  will also be returned.
     # @option params [String] :language The language to use when loading item
     #  display data.
-    # @option params [Boolean] :active_only	get only offers which are still
+    # @option params [Boolean] :active_only  get only offers which are still
     #  active, or offers that have changed in state since the
     #  time_historical_cutoff
-    # @option params [Boolean] :historical_only	get only offers which are
+    # @option params [Boolean] :historical_only  get only offers which are
     #  not active.
-    # @option params [Numeric]:time_historical_cutoff	When active_only is set,
+    # @option params [Numeric]:time_historical_cutoff  When active_only is set,
     #  offers updated since this time will also be returned
     def get_offers(params = {})
       @web_api.get('IEconService', 'GetTradeOffers', params)
     end
-
 
     def offer_details(tradeofferid)
       @web_api.get('IEconService', 'GetTradeOffer',
@@ -93,7 +93,7 @@ module Steam
         logger.debug "try ##{retries}"
         html = @community["trade/#{trade_id}/receipt/"].get
         items_info = Steam::Parsers::RecieptParser.parse html
-        items_info.map{ |i| Steam::Parsers::ItemDescriptionParser.parse(i)}
+        items_info.map { |i| Steam::Parsers::ItemDescriptionParser.parse(i) }
       rescue Error::InvalidResponse
         sleep 1
         retry if (retries += 1) < 3
@@ -105,11 +105,11 @@ module Steam
     # @param items_from_me [Array<Integer>] array of item assetids that you will loose after trade
     # @param items_from_them [Array<Integer>] array of item assetids that you will get after trade
     # @param message [String] message attached to tradeoffer
-    def send_trade_offer(steamid:, token:, items_from_me:, items_from_them:, message:'')
+    def send_trade_offer(steamid:, token:, items_from_me:, items_from_them:, message: '')
       # TODO: handling situation when offer wasnt sent/or recieved responce was incorrect,
       # TODO:     e.g.: steam respond with error/request timeouted but tradeoffer was sent
       if @steamid == steamid
-        raise Error::InvalidSteamID, "Cant send offer to myself"
+        raise Error::InvalidSteamID, 'Cant send offer to myself'
       end
 
       format_items = lambda do |assetid|
@@ -121,21 +121,21 @@ module Steam
         }
       end
 
-      items_from_me.map! &format_items
-      items_from_them.map! &format_items
+      items_from_me.map!(&format_items)
+      items_from_them.map!(&format_items)
 
       tradeoffer = {
         newversion: true,
         version: 2,
-        me: {assets: items_from_me, currency: [], ready: false },
-        them: {assets: items_from_them, currency: [], ready: false }
+        me: { assets: items_from_me, currency: [], ready: false },
+        them: { assets: items_from_them, currency: [], ready: false }
       }
 
       trade_offer_create_params = {
         trade_offer_access_token: token
       }
 
-      formFields = {
+      form_fields = {
         serverid: 1,
         sessionid: @cookies['sessionid'],
         partner: steamid.as_64,
@@ -152,8 +152,9 @@ module Steam
 
       referer = "#{Steam::TRADEOFFER_URL}/new/?#{URI.encode_www_form(query)}"
       path = '/tradeoffer/new/send?l=en'
-      result = JSON.parse @community[path].post(formFields, referer: referer)
+      result = JSON.parse @community[path].post(form_fields, referer: referer)
       raise result['strError'] if result.key? 'strError'
+
       # if result['needs_mobile_confirmation']
       #   @confirmations.confirm_single(result['tradeofferid'])
       # end
@@ -174,8 +175,9 @@ module Steam
       end
 
       private
-      def get_item_description(descriptions,classid,instanceid)
-        descriptions.select {|d| d[:classid] == classid && d[:instanceid] == instanceid}
+
+      def get_item_description(descriptions, classid, instanceid)
+        descriptions.select { |d| d[:classid] == classid && d[:instanceid] == instanceid }
       end
 
       def map_by_assetid(res)

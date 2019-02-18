@@ -47,7 +47,7 @@ module Steam
 
       def self.get_partner_id(el)
         id32 = el.css('.tradeoffer_items.secondary .tradeoffer_avatar')
-                      .attr('data-miniprofile').text.to_i
+                 .attr('data-miniprofile').text.to_i
         SteamID.from_steamid32(id32)
       end
       # def self.item_info()
@@ -60,7 +60,7 @@ module Steam
       def self.parse_items_block(el, inventory)
         el.map do |item|
           str = item.attribute('data-economy-item').text
-          /\d+\/(?<classid>\d+)\/?(?<instanceid>\d+)?/ =~ str
+          %r{\d+/(?<classid>\d+)/?(?<instanceid>\d+)?} =~ str
           # sometimes string has format classinfo/730/1367191561
           # meaning that instanceid = 0, it's totally ok behaviour
           instanceid ||= 0

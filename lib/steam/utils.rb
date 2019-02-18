@@ -1,4 +1,3 @@
-
 # module Steam
 #   class Client
 #     load_inventory
@@ -46,7 +45,7 @@
 # require 'net/http'
 # require 'cgi'
 #
-#AuthenticateUser doesn't do what you think it does. It's used by the Steam client to get web session logon cookies for the user who is currently logged into the client.
+# AuthenticateUser doesn't do what you think it does. It's used by the Steam client to get web session logon cookies for the user who is currently logged into the client.
 # def AuthenticateUser
 #   auth_url = "#{API_BASE_URL}/ISteamUserAuth/AuthenticateUser/v1"
 #   @webLoginKey = ''

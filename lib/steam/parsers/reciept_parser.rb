@@ -5,7 +5,7 @@ module Steam
   module Parsers
     class RecieptParser
       def self.parse(html)
-        script = html.match(/(var oItem;[\s\S]*)<\/script>/)
+        script = html.match(%r{(var oItem;[\s\S]*)</script>})
         unless script[1]
           doc = Nokogiri::HTML(html)
           message = doc.css('#mainContent .received_items_header .h1')[1].text
@@ -40,7 +40,6 @@ module Steam
           item[:assetid] = item.delete(:id)
           item
         end
-
       end
     end
   end

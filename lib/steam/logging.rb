@@ -22,4 +22,3 @@ module Logging
     @logger = logger
   end
 end
-

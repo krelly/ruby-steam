@@ -62,7 +62,7 @@ class WebSocketConnection
 
   def decode_messsage(packet)
     packet = StringIO.new(packet)
-    rawemsg = packet.read(4).unpack('L')[0]
+    rawemsg = packet.read(4).unpack1('L')
     packet.rewind
     # TODO: create separate class for handling this?
     header = if (rawemsg & 0x80000000) == 0
@@ -93,7 +93,9 @@ class WebSocketConnection
         @steamid = header.steamid
         @client_instance_id = body.client_instance_id
         set_interval(body.out_of_game_heartbeat_seconds) { send(EMsg::ClientHeartBeat) }
+        send(EMsg::ClientRequestWebAPIAuthenticateUserNonce)
       end
+
       logger.debug "ClientLogOnResponse: #{Enum::EResult.key(body[:eresult])}"
       # TODO: these require additional processing?
       # when EMsg::ClientVACBanStatus
@@ -102,6 +104,10 @@ class WebSocketConnection
       # when EMsg::ClientServersAvailable
       # when EMsg::ClientPersonaState
       # when EMsg::ClientChangeStatus
+    when EMsg::ClientRequestWebAPIAuthenticateUserNonceResponse
+
+      Steam::Bot.web_auth(header.steamid, body.webapi_authenticate_user_nonce)
+      puts 2
     when EMsg::ClientNewLoginKey
       @login_key = body.login_key
       send(EMsg::ClientNewLoginKeyAccepted, unique_id: body.unique_id)

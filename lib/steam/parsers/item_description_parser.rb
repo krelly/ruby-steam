@@ -8,9 +8,9 @@ module Steam
         item_info['stickers'] = []
         descriptions.map do |description|
           case description['value']
-            when /sticker_info/
-              # item has stickers
-              item_info['stickers'].concat parse_sticker_details(description['value'])
+          when /sticker_info/
+            # item has stickers
+            item_info['stickers'].concat parse_sticker_details(description['value'])
           end
         end
         item_info['tags'] = parse_tags(item_info['tags'])
@@ -40,12 +40,11 @@ module Steam
         # </div>
         info = Nokogiri::HTML(html).css('#sticker_info')
         images = info.css('img').map { |i| i.attr('src') }
-        sticker_names = info.xpath('//br/following-sibling::text()[1]').text.sub(/^Sticker:/,'').split(',')
-        [sticker_names,images].transpose.map {|name,image| Hash[name.strip, image] }
+        sticker_names = info.xpath('//br/following-sibling::text()[1]').text.sub(/^Sticker:/, '').split(',')
+        [sticker_names, images].transpose.map { |name, image| Hash[name.strip, image] }
       end
 
-      def self.parse_description(_descriptions)
-      end
+      def self.parse_description(_descriptions); end
 
       # Common types are:
       # Type

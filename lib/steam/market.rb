@@ -10,7 +10,7 @@ module Steam
     end
 
     def price_overview(item_name)
-      res = get('priceoverview', market_hash_name: item_name)
+      get('priceoverview', market_hash_name: item_name)
     end
 
     def price_history(item_name, period = :daily)
@@ -41,6 +41,7 @@ module Steam
       }
       res = JSON.parse @market[url].get(params: default_params.merge(params))
       raise InvalidResponse unless res['success']
+
       res
     end
 

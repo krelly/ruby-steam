@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'base64'
 require 'openssl'
 require 'digest/sha1'
@@ -22,10 +23,10 @@ module Steam
         descriptions = el.css(selector).map(&:content).join('. ')
         Confirmation.new(self,
                          @community,
-                         id:           el.attribute('data-confid').content.to_i,
-                         key:          el.attribute('data-key').content,
-                         cancel:       el.attribute('data-cancel').content,
-                         accept:       el.attribute('data-accept').content,
+                         id: el.attribute('data-confid').content.to_i,
+                         key: el.attribute('data-key').content,
+                         cancel: el.attribute('data-cancel').content,
+                         accept: el.attribute('data-accept').content,
                          description: descriptions)
       end
     end

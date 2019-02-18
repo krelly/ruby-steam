@@ -53,7 +53,7 @@ module Steam
     include Wisper::Publisher
 
     def initialize
-      @connection = WebSocketConnection.new(get_best_server)
+      @connection = WebSocketConnection.new(best_server)
       @connection.subscribe(self, prefix: 'on')
     end
 
@@ -89,16 +89,17 @@ module Steam
 
     private
 
-    def get_best_server
+    def best_server
       # TODO: improve score alghoritm
-      get_servers_list.map(&:value).compact.map(&score_server).sort_by { |e| e[:score] }.first[:endpoint]
+      # server_list.map(&:value).compact.map(&score_server).sort_by { |e| e[:score] }.first[:endpoint]
+      'CM01-LUX.cm.steampowered.com:27020'
     end
 
     def score_server
       ->(el) { el.merge(score: el[:latency] + el[:load] * 2) }
     end
 
-    def get_servers_list
+    def server_list
       # TODO: return bootstrapped if api call failed
       # 'wss://CM-01-WAW1.cm.steampowered.com:27020/cmsocket/'
       # bootstrapped_servers = JSON.parse(File.read("#{__dir__}/resources/servers_websocket.json"))
@@ -113,9 +114,10 @@ module Steam
       load = 110
       logger.debug "Checking #{endpoint}"
       latency = Benchmark.measure do
-        load = RestClient::Request.execute(method: :get, url: "https://#{endpoint}/cmping/", timeout: 0.5).headers[:x_steam_cmload]
+        load = RestClient::Request.execute(method: :get, url: "https://#{endpoint}/cmping/", timeout: 0.5)
+                                  .headers[:x_steam_cmload]
       end
-      { endpoint: endpoint, latency: latency.real * 1000, load: load.to_i}
+      { endpoint: endpoint, latency: latency.real * 1000, load: load.to_i }
     rescue StandardError => err
       logger.debug "#{endpoint} #{err.message}"
       nil

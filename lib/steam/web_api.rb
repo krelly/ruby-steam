@@ -43,6 +43,7 @@ module Steam
 
     private
 
+    # noinspection RubySimplifyBooleanInspection
     def query_api(interface, api_method, http_method:, version: 1, **params)
       params[:key] = @api_key if !@anonymous
       # Steam Web API interprets boolean as int's true => 1 false =>
