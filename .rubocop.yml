@@ -1,9 +1,9 @@
 AllCops:
     TargetRubyVersion: 2.3
+    Exclude:
+      - 'lib/steam/client/resources/**/*'
+      - 'lib/steam/client/enums/**/*'
 Style/FrozenStringLiteralComment:
     Enabled: false
 Style/NumericLiterals:
     Enabled: false
-AllCops:
-  Exclude:
-    - 'lib/steam/client/resources/**/*'
