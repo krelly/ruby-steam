@@ -1,0 +1,13 @@
+---
+# Steam login (not a display name!) and a password
+account_name:
+password:
+
+# Steam API key, only needed when using API methods (Steam::WebApi class), that require authentication
+# you can view or create it there: https://steamcommunity.com/dev/apikey
+api_key:
+# Steam guard shared secret
+# It is used for two-factor authentication (generating auth codes)
+shared_secret:
+# Identity secret which is used to confirm trades.
+identity_secret:
