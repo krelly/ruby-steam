@@ -106,7 +106,6 @@ module Steam
     def fetch_rsa_params
       get_rsa_url = "#{Steam::COMMUNITY_URL}/login/getrsakey?username=#{@account_name}"
       res = JSON.parse(RestClient.get(get_rsa_url))
-      # res = HTTP.get(get_rsa_url).parse
       modulus = res['publickey_mod'].hex
       exponent = res['publickey_exp'].hex
 

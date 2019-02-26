@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'two_factor.rb'
-require_relative 'login.rb'
+require_relative 'two_factor'
+require_relative 'login'
 
 require 'cgi'
 require 'json'
