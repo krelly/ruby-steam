@@ -1,10 +1,10 @@
-Steam is a ruby gem (~1k lines of ruby) designed to interoperate with Valve's Steam network.
+Steam is a ruby gem (~1k LOC) designed to interoperate with Valve's Steam network.
 
 It supports Steam Guard and CAPTCHAs.
 
 Inspired by  [SteamKit](https://github.com/SteamRE/SteamKit) and its javascript ports: [Node-steam](https://github.com/seishun/node-steam) and [SteamUser](https://github.com/DoctorMcKay/node-steam-user)
 
-#Features
+## Features
  - Allows interaction with the Steam network via the Steam client protocol (using reverse-engineered Steam client api) - check Steam::Client class
  - It includes a class to work with Steam Web API (Steam::WebApi)
  - Sending tradeoffers (check examples/send_offer.rb)
