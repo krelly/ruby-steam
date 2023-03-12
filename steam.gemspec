@@ -18,10 +18,11 @@ Gem::Specification.new do |s|
   s.add_dependency 'eventmachine', '~> 1.2'
   s.add_dependency 'faye-websocket', '~> 0.10.7'
   s.add_dependency 'json', '~> 2.0'
-  s.add_dependency 'nokogiri', '~> 1.8'
+  s.add_dependency 'nokogiri', '~> 1.14'
   s.add_dependency 'protobuf', '3.8.2'
   s.add_dependency 'rest-client', '~> 2.0'
-  s.add_dependency 'therubyracer', '0.12.3'
+  # s.add_dependency 'therubyracer', '0.12.3'
+  s.add_dependency 'mini_racer'
   s.add_dependency 'wisper', '~> 2.0'
 
   s.add_development_dependency 'pry'

@@ -1,4 +1,4 @@
-require 'v8'
+require 'mini_racer'
 require 'json'
 
 module Steam
@@ -26,16 +26,16 @@ module Steam
            };
           }
           #{script[1]};
-          json = JSON.stringify(items)
+          items
         JS
-        cxt = V8::Context.new
-        cxt.eval(js)
-        items = JSON.parse(cxt.scope.json)
+        cxt = MiniRacer::Context.new
+        items = cxt.eval(js)
+        puts items.length
+
         # id field is not standard,
         # CEcon_Asset says that it should be named assetid
         # details:
         # https://developer.valvesoftware.com/wiki/Steam_Web_API/IEconService
-        puts items.length
         items.map do |item|
           item[:assetid] = item.delete(:id)
           item

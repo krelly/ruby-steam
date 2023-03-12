@@ -1,6 +1,6 @@
 node/
 examples/config/*
-!examples/config/config.yml
+!examples/config/config.yml.sample
 float.js
 .idea/
 /Gemfile.lock

@@ -1,7 +1,7 @@
 require_relative 'examples_helper'
 
 
-bot = Steam::Bot.new(Config.credentials).login
+bot = Steam::Bot.new(**Config.credentials).login
 
 # Get counts of pending and new trade offers
 p bot.tradeoffers_summary

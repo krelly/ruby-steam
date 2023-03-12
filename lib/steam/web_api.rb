@@ -13,11 +13,11 @@ module Steam
 
     ## Generic methods
     def post(*args, **params)
-      query_api(*args, params.merge(http_method: :post))
+      query_api(*args, **params.merge(http_method: :post))
     end
 
     def get(*args, **params)
-      query_api(*args, params.merge(http_method: :get))
+      query_api(*args, **params.merge(http_method: :get))
     end
 
     ## Methods that require additional response processing

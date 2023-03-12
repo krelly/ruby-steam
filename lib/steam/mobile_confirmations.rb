@@ -25,8 +25,6 @@ module Steam
                          @community,
                          id: el.attribute('data-confid').content.to_i,
                          key: el.attribute('data-key').content,
-                         cancel: el.attribute('data-cancel').content,
-                         accept: el.attribute('data-accept').content,
                          description: descriptions)
       end
     end
@@ -66,12 +64,10 @@ module Steam
 
     class Confirmation
       attr_reader :id
-      def initialize(parent, community, id:, key:, cancel:, accept:, description:)
+      def initialize(parent, community, id:, key:, description:)
         @parent = parent
         @id = id
         @key = key
-        @cancel = cancel
-        @accept = accept
         @description = description
         @community = community
       end
