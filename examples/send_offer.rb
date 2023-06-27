@@ -7,11 +7,11 @@ bot = Steam::Bot.new(**Config.credentials).login
 p bot.tradeoffers_summary
 
 
-partner_id = Steam::SteamID.new(76561198125634472) # Change this to your friend steamid
-inv = Steam::Bot.get_inventory(partner_id)
-
-offer = bot.send_trade_offer(steamid: partner_id, token: '<TRADEOFFER TOKEN>', items_from_me: [], items_from_them: [inv.first[0].to_i], message: 'Hi, this is a gem test!')
-offer
+# partner_id = Steam::SteamID.new(76561198125634472) # Change this to your friend steamid
+# inv = Steam::Bot.get_inventory(partner_id)
+#
+# offer = bot.send_trade_offer(steamid: partner_id, token: '<TRADEOFFER TOKEN>', items_from_me: [], items_from_them: [inv.first[0].to_i], message: 'Hi, this is a gem test!')
+# offer
 
 bot.fetch_confirmations.each do |confirmation|
   puts confirmation.accept

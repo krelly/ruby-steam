@@ -4,7 +4,7 @@ require 'yaml'
 
 module Config
   def self.credentials
-    config = YAML.load_file("#{__dir__}/config/config.yml")
+    config = YAML.load_file("#{__dir__}/config/config.dimickh.yml")
     config.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
   end
 end

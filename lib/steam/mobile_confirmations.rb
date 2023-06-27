@@ -6,6 +6,7 @@ require 'digest/sha1'
 require 'nokogiri'
 require 'json'
 
+# Inspired by https://github.com/DoctorMcKay/node-steamcommunity/blob/master/components/confirmations.js
 module Steam
   class MobileConfirmations
     def initialize(identity_secret, steamid, community)
@@ -16,16 +17,16 @@ module Steam
     end
 
     def fetch
-      res = @community["mobileconf/conf?#{generate_confirmation_url}"].get
-      doc = Nokogiri::HTML res
-      doc.css('[data-confid]').map do |el|
-        selector = '.mobileconf_list_entry_description>div'
-        descriptions = el.css(selector).map(&:content).join('. ')
-        Confirmation.new(self,
-                         @community,
-                         id: el.attribute('data-confid').content.to_i,
-                         key: el.attribute('data-key').content,
-                         description: descriptions)
+      res = @community["mobileconf/getlist?#{generate_confirmation_url}"].get
+      data = JSON.parse(res, symbolize_names:true)
+      data[:conf].map do |confirmation_data|
+        Confirmation.new(
+          self,
+          @community,
+          id: confirmation_data[:id].to_i,
+          key: confirmation_data[:nonce],
+          description: "#{confirmation_data[:type_name]} - #{confirmation_data[:headline]}, #{confirmation_data[:summary].join("\n")}"
+        )
       end
     end
 
@@ -43,10 +44,10 @@ module Steam
       params = {
               p: @device_id,
               a: @steamid,
-              k: generate_confirmation_key(time, 'conf'),
+              k: generate_confirmation_key(time, 'list'),
               t: time,
-              m: 'android',
-              tag: 'conf'
+              m: 'react',
+              tag: 'list'
       }
       URI.encode_www_form(params)
     end
@@ -63,6 +64,7 @@ module Steam
     end
 
     class Confirmation
+      # The official app uses tags reject/accept, but cancel/allow still works so use these for backward compatibility
       attr_reader :id
       def initialize(parent, community, id:, key:, description:)
         @parent = parent
